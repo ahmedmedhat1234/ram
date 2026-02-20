@@ -7,8 +7,8 @@ const tournamentData = {
       "date": "الجمعة 20/2",
       "time": "9:00",
       "group": 1,
-      "team1": "شباب الوراقية",
-      "team2": "نمرة 2"
+      "team1": "نسور مصر",
+      "team2": "بلال الصاوي"
     },
     {
       "date": "الجمعة 20/2",
@@ -34,49 +34,49 @@ const tournamentData = {
     {
       "date": "السبت 21/2",
       "time": "9:00",
-      "group": 1,
+      "group": 3,
       "team1": "الحريفة",
       "team2": "محمود أشرف"
     },
     {
       "date": "السبت 21/2",
       "time": "9:45",
-      "group": 2,
+      "group": 9,
       "team1": "شباب أنطون يادس",
       "team2": "الاتحاد"
     },
     {
       "date": "السبت 21/2",
       "time": "10:30",
-      "group": 3,
+      "group": 1,
       "team1": "كابيتانو",
       "team2": "نسور دفشو"
     },
     {
       "date": "السبت 21/2",
       "time": "11:20",
-      "group": 4,
-      "team1": "نسور مصر",
-      "team2": "بلال الصاوي"
-    },
-    {
-      "date": "الأحد 22/2",
-      "time": "9:00",
-      "group": 5,
+      "group": 6,
       "team1": "ريال البيضا",
       "team2": "ميدو خليل"
     },
     {
       "date": "الأحد 22/2",
+      "time": "9:00",
+      "group": 4,
+      "team1": "شباب الوراقية",
+      "team2": "نمرة 2"
+    },
+    {
+      "date": "الأحد 22/2",
       "time": "9:45",
-      "group": 5,
+      "group": 8,
       "team1": "مسعد أبورابح",
       "team2": "حسن الندي"
     },
     {
       "date": "الأحد 22/2",
       "time": "10:30",
-      "group": 6,
+      "group": 5,
       "team1": "شباب العدلي",
       "team2": "حريفة مساكن 1"
     },
@@ -118,7 +118,7 @@ const tournamentData = {
     {
       "date": "الثلاثاء 24/2",
       "time": "9:00",
-      "group": 8,
+      "group": 6,
       "team1": "ميدو خليل",
       "team2": "كوم أشو"
     },
@@ -146,7 +146,7 @@ const tournamentData = {
     {
       "date": "الأربعاء 25/2",
       "time": "9:00",
-      "group": 9,
+      "group": 2,
       "team1": "نجوم أبوشادي",
       "team2": "المغلاني"
     },
@@ -174,7 +174,7 @@ const tournamentData = {
     {
       "date": "الجمعة 27/2",
       "time": "9:00",
-      "group": 2,
+      "group": 3,
       "team1": "أصدقاء محمد صبحي",
       "team2": "الحريفة"
     },
@@ -195,14 +195,14 @@ const tournamentData = {
     {
       "date": "الجمعة 27/2",
       "time": "11:20",
-      "group": 3,
+      "group": 2,
       "team1": "عزبة يوسف",
       "team2": "نجوم أبوشادي"
     },
     {
       "date": "السبت 28/2",
       "time": "9:00",
-      "group": 3,
+      "group": 5,
       "team1": "شباب دربالة",
       "team2": "حريفة مساكن 1"
     },
@@ -223,7 +223,7 @@ const tournamentData = {
     {
       "date": "السبت 28/2",
       "time": "11:20",
-      "group": 5,
+      "group": 3,
       "team1": "الدراويش",
       "team2": "محمود أشرف"
     },
@@ -237,7 +237,7 @@ const tournamentData = {
     {
       "date": "الأحد 1/3",
       "time": "9:45",
-      "group": 6,
+      "group": 8,
       "team1": "الجديدة",
       "team2": "حسن الندي"
     },
@@ -258,7 +258,7 @@ const tournamentData = {
     {
       "date": "الاثنين 2/3",
       "time": "9:00",
-      "group": 8,
+      "group": 5,
       "team1": "الحاوي",
       "team2": "شباب دربالة"
     },
@@ -300,14 +300,14 @@ const tournamentData = {
     {
       "date": "الثلاثاء 3/3",
       "time": "10:30",
-      "group": 11,
+      "group": 12,
       "team1": "حميصة",
       "team2": "أنطونيادس"
     },
     {
       "date": "الثلاثاء 3/3",
       "time": "11:20",
-      "group": 12,
+      "group": 11,
       "team1": "نجوم دفشو",
       "team2": "الديسياوي"
     },
@@ -342,7 +342,7 @@ const tournamentData = {
     {
       "date": "الخميس 5/3",
       "time": "9:00",
-      "group": 2,
+      "group": 3,
       "team1": "الدراويش",
       "team2": "الحريفة"
     },
@@ -356,7 +356,7 @@ const tournamentData = {
     {
       "date": "الخميس 5/3",
       "time": "10:30",
-      "group": 3,
+      "group": 2,
       "team1": "الجزيرة",
       "team2": "نجوم أبوشادي"
     },
@@ -377,14 +377,14 @@ const tournamentData = {
     {
       "date": "الجمعة 6/3",
       "time": "9:45",
-      "group": 5,
+      "group": 6,
       "team1": "ريال البيضا",
       "team2": "كوم أشو"
     },
     {
       "date": "الجمعة 6/3",
       "time": "10:30",
-      "group": 6,
+      "group": 5,
       "team1": "شباب دربالة",
       "team2": "شباب العدلي"
     },
@@ -426,14 +426,14 @@ const tournamentData = {
     {
       "date": "الأحد 8/3",
       "time": "9:00",
-      "group": 8,
+      "group": 9,
       "team1": "العمدوية",
       "team2": "الاتحاد"
     },
     {
       "date": "الأحد 8/3",
       "time": "9:45",
-      "group": 9,
+      "group": 8,
       "team1": "حسن الندي",
       "team2": "علي لمونه"
     },
@@ -514,28 +514,6 @@ const tournamentData = {
       "name": "المجموعة 1",
       "teams": [
         {
-          "name": "نسور دفشو",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "الحريفة",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
           "name": "بلال الصاوي",
           "played": 0,
           "won": 0,
@@ -547,7 +525,29 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "شباب الوراقية",
+          "name": "نسور دفشو",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "نسور مصر",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "كابيتانو",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -564,6 +564,28 @@ const tournamentData = {
       "name": "المجموعة 2",
       "teams": [
         {
+          "name": "نجوم أبوشادي",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "المغلاني",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
           "name": "عزبة يوسف",
           "played": 0,
           "won": 0,
@@ -575,29 +597,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "الحريفة",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "شباب أنطون يادس",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "الاتحاد",
+          "name": "الجزيرة",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -614,7 +614,7 @@ const tournamentData = {
       "name": "المجموعة 3",
       "teams": [
         {
-          "name": "عزبة يوسف",
+          "name": "الحريفة",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -625,7 +625,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "شباب دربالة",
+          "name": "محمود أشرف",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -636,7 +636,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "نسور دفشو",
+          "name": "الدراويش",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -647,7 +647,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "حريفة مساكن 1",
+          "name": "أصدقاء محمد صبحي",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -675,7 +675,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "بلال الصاوي",
+          "name": "شباب الوراقية",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -686,7 +686,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "شباب الوراقية",
+          "name": "نمرة 2",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -714,39 +714,6 @@ const tournamentData = {
       "name": "المجموعة 5",
       "teams": [
         {
-          "name": "مسعد أبورابح",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "حريفة مساكن 1",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "كوم أشو",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
           "name": "شباب العدلي",
           "played": 0,
           "won": 0,
@@ -756,15 +723,20 @@ const tournamentData = {
           "ga": 0,
           "gd": 0,
           "points": 0
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "name": "المجموعة 6",
-      "teams": [
+        },
         {
           "name": "حريفة مساكن 1",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "الحاوي",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -784,9 +756,15 @@ const tournamentData = {
           "ga": 0,
           "gd": 0,
           "points": 0
-        },
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "المجموعة 6",
+      "teams": [
         {
-          "name": "كوم أشو",
+          "name": "ريال البيضا",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -806,6 +784,28 @@ const tournamentData = {
           "ga": 0,
           "gd": 0,
           "points": 0
+        },
+        {
+          "name": "ميدو خليل",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "كوم أشو",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
         }
       ]
     },
@@ -813,6 +813,17 @@ const tournamentData = {
       "id": 7,
       "name": "المجموعة 7",
       "teams": [
+        {
+          "name": "المداح",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
         {
           "name": "اللؤلؤة",
           "played": 0,
@@ -826,17 +837,6 @@ const tournamentData = {
         },
         {
           "name": "عتمان",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "المداح",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -864,6 +864,17 @@ const tournamentData = {
       "name": "المجموعة 8",
       "teams": [
         {
+          "name": "الجديدة",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
           "name": "مسعد أبورابح",
           "played": 0,
           "won": 0,
@@ -875,7 +886,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "شباب دربالة",
+          "name": "علي لمونه",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -886,18 +897,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "الاتحاد",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "كوم أشو",
+          "name": "حسن الندي",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -914,7 +914,7 @@ const tournamentData = {
       "name": "المجموعة 9",
       "teams": [
         {
-          "name": "نجوم أبوشادي",
+          "name": "الاتحاد",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -936,7 +936,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "الاتحاد",
+          "name": "عمر جمال",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -947,7 +947,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "علي لمونه",
+          "name": "العمدوية",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -964,7 +964,7 @@ const tournamentData = {
       "name": "المجموعة 10",
       "teams": [
         {
-          "name": "أباظة",
+          "name": "الرويني",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -975,7 +975,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "الرويني",
+          "name": "أباظة",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -1014,7 +1014,7 @@ const tournamentData = {
       "name": "المجموعة 11",
       "teams": [
         {
-          "name": "نجوم دفشو",
+          "name": "الديسياوي",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -1036,7 +1036,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "أنطونيادس",
+          "name": "نجوم دفشو",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -1064,17 +1064,6 @@ const tournamentData = {
       "name": "المجموعة 12",
       "teams": [
         {
-          "name": "نجوم دفشو",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
           "name": "النصر",
           "played": 0,
           "won": 0,
@@ -1086,7 +1075,7 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "أنطونيادس",
+          "name": "حميصة",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -1097,7 +1086,18 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "الديسياوي",
+          "name": "PH",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "أنطونيادس",
           "played": 0,
           "won": 0,
           "lost": 0,
