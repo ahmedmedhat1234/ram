@@ -27,26 +27,34 @@ document.addEventListener('DOMContentLoaded', () => {
         
         dates.forEach(date => {
             const dateSection = document.createElement('div');
-            dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6';
+            dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8';
             
             const dateHeader = document.createElement('div');
-            dateHeader.className = 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 py-4 font-bold text-lg flex items-center gap-3';
+            dateHeader.className = 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-6 py-4 font-bold text-lg flex items-center gap-3';
             dateHeader.innerHTML = `<i class="far fa-calendar-check"></i> ${date}`;
             dateSection.appendChild(dateHeader);
 
             const matchesList = document.createElement('div');
-            matchesList.className = 'divide-y divide-slate-50';
+            matchesList.className = 'divide-y-2 divide-slate-100'; // Thicker dividers
             
             groupedByDate[date].forEach(match => {
                 const matchRow = document.createElement('div');
-                matchRow.className = 'p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 hover:bg-slate-50 transition-colors';
+                matchRow.className = 'p-5 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 hover:bg-slate-50 transition-colors';
                 matchRow.innerHTML = `
-                    <div class="flex-1 text-center md:text-right font-bold text-slate-700 text-lg">${match.team1}</div>
-                    <div class="flex flex-col items-center gap-1 px-4 min-w-[140px]">
-                        <div class="text-blue-600 font-black text-2xl tracking-tighter">${match.time}</div>
-                        <div class="text-[11px] bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold border border-blue-100">المجموعة ${match.group}</div>
+                    <div class="flex-1 flex items-center justify-end gap-4 w-full md:w-auto">
+                        <span class="text-center md:text-right font-bold text-slate-800 text-xl order-2 md:order-1">${match.team1}</span>
+                        <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-12 h-12 text-center bg-slate-100 border-2 border-slate-200 rounded-xl font-black text-xl text-blue-700 focus:border-blue-500 focus:outline-none order-1 md:order-2">
                     </div>
-                    <div class="flex-1 text-center md:text-left font-bold text-slate-700 text-lg">${match.team2}</div>
+                    
+                    <div class="flex flex-col items-center gap-2 px-6 py-2 bg-blue-50/50 rounded-2xl border border-blue-100 min-w-[140px]">
+                        <div class="text-blue-700 font-black text-2xl tracking-tighter">${match.time}</div>
+                        <div class="text-[11px] bg-blue-600 text-white px-3 py-1 rounded-full font-bold uppercase">المجموعة ${match.group}</div>
+                    </div>
+                    
+                    <div class="flex-1 flex items-center justify-start gap-4 w-full md:w-auto">
+                        <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-12 h-12 text-center bg-slate-100 border-2 border-slate-200 rounded-xl font-black text-xl text-blue-700 focus:border-blue-500 focus:outline-none">
+                        <span class="text-center md:text-left font-bold text-slate-800 text-xl">${match.team2}</span>
+                    </div>
                 `;
                 matchesList.appendChild(matchRow);
             });
@@ -56,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (dates.length === 0) {
-            contentDaily.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
+            contentDaily.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
         }
     }
 
@@ -69,11 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (filter && !hasTeamMatch) return;
 
             const groupCard = document.createElement('div');
-            groupCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow';
+            groupCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow';
             
             const groupHeader = document.createElement('div');
-            groupHeader.className = 'bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center justify-between';
-            groupHeader.innerHTML = `<span>${group.name}</span> <i class="fas fa-trophy text-amber-400"></i>`;
+            groupHeader.className = 'bg-slate-50 border-b-2 border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center justify-between';
+            groupHeader.innerHTML = `<span>${group.name}</span> <i class="fas fa-trophy text-amber-500"></i>`;
             groupCard.appendChild(groupHeader);
 
             const tableContainer = document.createElement('div');
@@ -81,38 +89,38 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let tableHTML = `
                 <table class="w-full text-right text-sm">
-                    <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase font-bold">
+                    <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-100">
                         <tr>
-                            <th class="px-4 py-2 text-right">الفريق</th>
-                            <th class="px-2 py-2 text-center">ل</th>
-                            <th class="px-2 py-2 text-center">ف</th>
-                            <th class="px-2 py-2 text-center">ت</th>
-                            <th class="px-2 py-2 text-center">خ</th>
-                            <th class="px-2 py-2 text-center">له</th>
-                            <th class="px-2 py-2 text-center">ع</th>
-                            <th class="px-2 py-2 text-center">+/-</th>
-                            <th class="px-4 py-2 text-center text-blue-600">ن</th>
+                            <th class="px-4 py-3 text-right">الفريق</th>
+                            <th class="px-2 py-3 text-center">ل</th>
+                            <th class="px-2 py-3 text-center">ف</th>
+                            <th class="px-2 py-3 text-center">ت</th>
+                            <th class="px-2 py-3 text-center">خ</th>
+                            <th class="px-2 py-3 text-center">له</th>
+                            <th class="px-2 py-3 text-center">ع</th>
+                            <th class="px-2 py-3 text-center">+/-</th>
+                            <th class="px-4 py-3 text-center text-blue-600">ن</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50">
+                    <tbody class="divide-y divide-slate-100">
             `;
 
             group.teams.forEach((team, idx) => {
                 const isHighlighted = filter && team.name.toLowerCase().includes(filter.toLowerCase());
                 tableHTML += `
-                    <tr class="${isHighlighted ? 'bg-yellow-50' : ''} hover:bg-slate-50/80 transition-colors">
-                        <td class="px-4 py-3 font-bold text-slate-700">
+                    <tr class="${isHighlighted ? 'bg-yellow-50' : ''} hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-4 font-bold text-slate-800">
                             <span class="inline-block w-5 text-slate-300 text-[10px]">${idx + 1}</span>
                             ${team.name}
                         </td>
-                        <td class="px-2 py-3 text-center text-slate-500">${team.played}</td>
-                        <td class="px-2 py-3 text-center text-green-600 font-medium">${team.won}</td>
-                        <td class="px-2 py-3 text-center text-slate-500">${team.draw}</td>
-                        <td class="px-2 py-3 text-center text-red-500 font-medium">${team.lost}</td>
-                        <td class="px-2 py-3 text-center text-slate-500">${team.gf}</td>
-                        <td class="px-2 py-3 text-center text-slate-500">${team.ga}</td>
-                        <td class="px-2 py-3 text-center text-slate-500 font-medium">${team.gd}</td>
-                        <td class="px-4 py-3 text-center font-black text-blue-600">${team.points}</td>
+                        <td class="px-2 py-4 text-center text-slate-600">${team.played}</td>
+                        <td class="px-2 py-4 text-center text-green-600 font-bold">${team.won}</td>
+                        <td class="px-2 py-4 text-center text-slate-600">${team.draw}</td>
+                        <td class="px-2 py-4 text-center text-red-600 font-bold">${team.lost}</td>
+                        <td class="px-2 py-4 text-center text-slate-600">${team.gf}</td>
+                        <td class="px-2 py-4 text-center text-slate-600">${team.ga}</td>
+                        <td class="px-2 py-4 text-center text-slate-600 font-bold">${team.gd}</td>
+                        <td class="px-4 py-4 text-center font-black text-blue-700 bg-blue-50/30">${team.points}</td>
                     </tr>
                 `;
             });
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (contentGroups.children.length === 0) {
-            contentGroups.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
+            contentGroups.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
         }
     }
 
