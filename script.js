@@ -5,12 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
 
-    console.log('Tournament Data Loaded:', tournamentData);
-
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
     document.getElementById('main-subtitle').textContent = tournamentData.subtitle;
-    document.getElementById('group-count').textContent = tournamentData.groupCount;
+    document.getElementById('group-count').textContent = "12";
 
     // Render Daily Schedule
     function renderDaily(filter = '') {
@@ -25,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
             groupedByDate[match.date].push(match);
         });
 
-        // Sort dates if needed, but here we rely on the order in data.js
         const dates = Object.keys(groupedByDate);
         
         dates.forEach(date => {
@@ -33,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6';
             
             const dateHeader = document.createElement('div');
-            dateHeader.className = 'bg-blue-600 text-white px-6 py-3 font-bold text-lg flex items-center gap-3';
+            dateHeader.className = 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 py-4 font-bold text-lg flex items-center gap-3';
             dateHeader.innerHTML = `<i class="far fa-calendar-check"></i> ${date}`;
             dateSection.appendChild(dateHeader);
 
@@ -44,12 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const matchRow = document.createElement('div');
                 matchRow.className = 'p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 hover:bg-slate-50 transition-colors';
                 matchRow.innerHTML = `
-                    <div class="flex-1 text-center md:text-right font-semibold text-slate-700">${match.team1}</div>
-                    <div class="flex flex-col items-center gap-1 px-4 min-w-[120px]">
-                        <div class="text-blue-600 font-bold text-lg">${match.time}</div>
-                        <div class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">مجموعة ${match.group}</div>
+                    <div class="flex-1 text-center md:text-right font-bold text-slate-700 text-lg">${match.team1}</div>
+                    <div class="flex flex-col items-center gap-1 px-4 min-w-[140px]">
+                        <div class="text-blue-600 font-black text-2xl tracking-tighter">${match.time}</div>
+                        <div class="text-[11px] bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold border border-blue-100">المجموعة ${match.group}</div>
                     </div>
-                    <div class="flex-1 text-center md:text-left font-semibold text-slate-700">${match.team2}</div>
+                    <div class="flex-1 text-center md:text-left font-bold text-slate-700 text-lg">${match.team2}</div>
                 `;
                 matchesList.appendChild(matchRow);
             });
@@ -59,65 +56,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (dates.length === 0) {
-            contentDaily.innerHTML = '<div class="text-center py-12 text-slate-400">لا توجد نتائج تطابق بحثك</div>';
+            contentDaily.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
         }
     }
 
-    // Render Group Tables
+    // Render Group Tables (Standings)
     function renderGroups(filter = '') {
         contentGroups.innerHTML = '';
-        const groupedByGroup = {};
         
-        for (let i = 1; i <= tournamentData.groupCount; i++) {
-            groupedByGroup[i] = tournamentData.matches.filter(m => m.group === i);
-        }
-
-        Object.keys(groupedByGroup).forEach(groupNum => {
-            const matches = groupedByGroup[groupNum];
-            const hasMatch = matches.some(m => {
-                const matchText = `${m.team1} ${m.team2} ${m.date}`.toLowerCase();
-                return !filter || matchText.includes(filter.toLowerCase());
-            });
-            
-            if (filter && !hasMatch) return;
+        tournamentData.groups.forEach(group => {
+            const hasTeamMatch = group.teams.some(t => t.name.toLowerCase().includes(filter.toLowerCase()));
+            if (filter && !hasTeamMatch) return;
 
             const groupCard = document.createElement('div');
-            groupCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden group-card flex flex-col';
+            groupCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col hover:shadow-md transition-shadow';
             
             const groupHeader = document.createElement('div');
-            groupHeader.className = 'bg-slate-50 border-b border-slate-100 px-6 py-4 font-bold text-slate-800 flex items-center justify-between';
-            groupHeader.innerHTML = `<span>المجموعة ${groupNum}</span> <i class="fas fa-users text-slate-300"></i>`;
+            groupHeader.className = 'bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center justify-between';
+            groupHeader.innerHTML = `<span>${group.name}</span> <i class="fas fa-trophy text-amber-400"></i>`;
             groupCard.appendChild(groupHeader);
 
-            const matchesList = document.createElement('div');
-            matchesList.className = 'p-4 space-y-3 flex-1';
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'overflow-x-auto';
             
-            matches.forEach(match => {
-                const matchText = `${match.team1} ${match.team2} ${match.date}`.toLowerCase();
-                const isMatch = !filter || matchText.includes(filter.toLowerCase());
-                
-                const matchItem = document.createElement('div');
-                matchItem.className = `p-3 rounded-xl border ${isMatch ? 'border-slate-100 bg-slate-50/50' : 'border-transparent opacity-40'} transition-all`;
-                matchItem.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] font-bold text-slate-400">${match.date}</span>
-                        <span class="text-[10px] font-bold text-blue-500">${match.time}</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-2 text-xs font-bold text-slate-700">
-                        <span class="flex-1 text-right truncate">${match.team1}</span>
-                        <span class="text-slate-300">×</span>
-                        <span class="flex-1 text-left truncate">${match.team2}</span>
-                    </div>
+            let tableHTML = `
+                <table class="w-full text-right text-sm">
+                    <thead class="bg-slate-50/50 text-slate-400 text-[10px] uppercase font-bold">
+                        <tr>
+                            <th class="px-4 py-2 text-right">الفريق</th>
+                            <th class="px-2 py-2 text-center">ل</th>
+                            <th class="px-2 py-2 text-center">ف</th>
+                            <th class="px-2 py-2 text-center">ت</th>
+                            <th class="px-2 py-2 text-center">خ</th>
+                            <th class="px-2 py-2 text-center">له</th>
+                            <th class="px-2 py-2 text-center">ع</th>
+                            <th class="px-2 py-2 text-center">+/-</th>
+                            <th class="px-4 py-2 text-center text-blue-600">ن</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+            `;
+
+            group.teams.forEach((team, idx) => {
+                const isHighlighted = filter && team.name.toLowerCase().includes(filter.toLowerCase());
+                tableHTML += `
+                    <tr class="${isHighlighted ? 'bg-yellow-50' : ''} hover:bg-slate-50/80 transition-colors">
+                        <td class="px-4 py-3 font-bold text-slate-700">
+                            <span class="inline-block w-5 text-slate-300 text-[10px]">${idx + 1}</span>
+                            ${team.name}
+                        </td>
+                        <td class="px-2 py-3 text-center text-slate-500">${team.played}</td>
+                        <td class="px-2 py-3 text-center text-green-600 font-medium">${team.won}</td>
+                        <td class="px-2 py-3 text-center text-slate-500">${team.draw}</td>
+                        <td class="px-2 py-3 text-center text-red-500 font-medium">${team.lost}</td>
+                        <td class="px-2 py-3 text-center text-slate-500">${team.gf}</td>
+                        <td class="px-2 py-3 text-center text-slate-500">${team.ga}</td>
+                        <td class="px-2 py-3 text-center text-slate-500 font-medium">${team.gd}</td>
+                        <td class="px-4 py-3 text-center font-black text-blue-600">${team.points}</td>
+                    </tr>
                 `;
-                matchesList.appendChild(matchItem);
             });
-            
-            groupCard.appendChild(matchesList);
+
+            tableHTML += `</tbody></table>`;
+            tableContainer.innerHTML = tableHTML;
+            groupCard.appendChild(tableContainer);
             contentGroups.appendChild(groupCard);
         });
 
         if (contentGroups.children.length === 0) {
-            contentGroups.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400">لا توجد نتائج تطابق بحثك</div>';
+            contentGroups.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
         }
     }
 
