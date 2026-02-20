@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
 
+    console.log('Tournament Data Loaded:', tournamentData);
+
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
     document.getElementById('main-subtitle').textContent = tournamentData.subtitle;
@@ -16,15 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const groupedByDate = {};
         
         tournamentData.matches.forEach(match => {
-            if (filter && !match.team1.includes(filter) && !match.team2.includes(filter)) return;
+            const matchText = `${match.team1} ${match.team2} ${match.date} ${match.group}`.toLowerCase();
+            if (filter && !matchText.includes(filter.toLowerCase())) return;
             
             if (!groupedByDate[match.date]) groupedByDate[match.date] = [];
             groupedByDate[match.date].push(match);
         });
 
-        Object.keys(groupedByDate).forEach(date => {
+        // Sort dates if needed, but here we rely on the order in data.js
+        const dates = Object.keys(groupedByDate);
+        
+        dates.forEach(date => {
             const dateSection = document.createElement('div');
-            dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden';
+            dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6';
             
             const dateHeader = document.createElement('div');
             dateHeader.className = 'bg-blue-600 text-white px-6 py-3 font-bold text-lg flex items-center gap-3';
@@ -52,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             contentDaily.appendChild(dateSection);
         });
 
-        if (Object.keys(groupedByDate).length === 0) {
+        if (dates.length === 0) {
             contentDaily.innerHTML = '<div class="text-center py-12 text-slate-400">لا توجد نتائج تطابق بحثك</div>';
         }
     }
@@ -68,7 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.keys(groupedByGroup).forEach(groupNum => {
             const matches = groupedByGroup[groupNum];
-            const hasMatch = matches.some(m => !filter || m.team1.includes(filter) || m.team2.includes(filter));
+            const hasMatch = matches.some(m => {
+                const matchText = `${m.team1} ${m.team2} ${m.date}`.toLowerCase();
+                return !filter || matchText.includes(filter.toLowerCase());
+            });
+            
             if (filter && !hasMatch) return;
 
             const groupCard = document.createElement('div');
@@ -83,7 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
             matchesList.className = 'p-4 space-y-3 flex-1';
             
             matches.forEach(match => {
-                const isMatch = !filter || match.team1.includes(filter) || match.team2.includes(filter);
+                const matchText = `${match.team1} ${match.team2} ${match.date}`.toLowerCase();
+                const isMatch = !filter || matchText.includes(filter.toLowerCase());
+                
                 const matchItem = document.createElement('div');
                 matchItem.className = `p-3 rounded-xl border ${isMatch ? 'border-slate-100 bg-slate-50/50' : 'border-transparent opacity-40'} transition-all`;
                 matchItem.innerHTML = `
@@ -117,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabGroups.classList.add('text-slate-500');
         contentDaily.classList.remove('hidden');
         contentGroups.classList.add('hidden');
+        renderDaily(searchInput.value);
     });
 
     tabGroups.addEventListener('click', () => {
@@ -132,8 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Search
     searchInput.addEventListener('input', (e) => {
         const val = e.target.value;
-        renderDaily(val);
-        renderGroups(val);
+        if (!contentDaily.classList.contains('hidden')) {
+            renderDaily(val);
+        } else {
+            renderGroups(val);
+        }
     });
 
     // Initial Render
