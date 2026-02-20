@@ -30,30 +30,30 @@ document.addEventListener('DOMContentLoaded', () => {
             dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8';
             
             const dateHeader = document.createElement('div');
-            dateHeader.className = 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-6 py-4 font-bold text-lg flex items-center gap-3';
+            dateHeader.className = 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-6 py-3 font-bold text-base flex items-center gap-3';
             dateHeader.innerHTML = `<i class="far fa-calendar-check"></i> ${date}`;
             dateSection.appendChild(dateHeader);
 
             const matchesList = document.createElement('div');
-            matchesList.className = 'divide-y-2 divide-slate-100'; // Thicker dividers
+            matchesList.className = 'divide-y-2 divide-slate-100';
             
             groupedByDate[date].forEach(match => {
                 const matchRow = document.createElement('div');
-                matchRow.className = 'p-5 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 hover:bg-slate-50 transition-colors';
+                matchRow.className = 'px-4 py-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-sm';
                 matchRow.innerHTML = `
-                    <div class="flex-1 flex items-center justify-end gap-4 w-full md:w-auto">
-                        <span class="text-center md:text-right font-bold text-slate-800 text-xl order-2 md:order-1">${match.team1}</span>
-                        <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-12 h-12 text-center bg-slate-100 border-2 border-slate-200 rounded-xl font-black text-xl text-blue-700 focus:border-blue-500 focus:outline-none order-1 md:order-2">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
+                        <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
                     </div>
                     
-                    <div class="flex flex-col items-center gap-2 px-6 py-2 bg-blue-50/50 rounded-2xl border border-blue-100 min-w-[140px]">
-                        <div class="text-blue-700 font-black text-2xl tracking-tighter">${match.time}</div>
-                        <div class="text-[11px] bg-blue-600 text-white px-3 py-1 rounded-full font-bold uppercase">المجموعة ${match.group}</div>
+                    <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
+                        <span class="font-bold text-blue-700 text-xs">${match.time}</span>
+                        <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
                     </div>
                     
-                    <div class="flex-1 flex items-center justify-start gap-4 w-full md:w-auto">
-                        <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-12 h-12 text-center bg-slate-100 border-2 border-slate-200 rounded-xl font-black text-xl text-blue-700 focus:border-blue-500 focus:outline-none">
-                        <span class="text-center md:text-left font-bold text-slate-800 text-xl">${match.team2}</span>
+                    <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
+                        <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                        <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
                     </div>
                 `;
                 matchesList.appendChild(matchRow);
