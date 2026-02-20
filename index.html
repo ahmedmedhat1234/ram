@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول الدورة الرمضانية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+        }
+        .tab-active {
+            background-color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            color: #2563eb;
+        }
+        .group-card {
+            transition: transform 0.2s;
+        }
+        .group-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-600 text-white p-4 rounded-xl shadow-lg">
+                    <span id="group-count" class="text-3xl font-bold block leading-none">12</span>
+                    <span class="text-xs opacity-80">مجموعة</span>
+                </div>
+                <div>
+                    <h1 id="main-title" class="text-2xl md:text-3xl font-bold text-slate-800">جدول الدورة الرمضانية</h1>
+                    <p id="main-subtitle" class="text-slate-500 text-sm md:text-base">دورة شاملة من 20 فبراير إلى 9 مارس 2026</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search -->
+        <div class="relative mb-8">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                <i class="fas fa-search text-slate-400"></i>
+            </div>
+            <input type="text" id="search-input" 
+                class="w-full bg-white border border-slate-200 rounded-xl py-3 pr-12 pl-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all"
+                placeholder="ابحث عن فريق...">
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-slate-100 p-1 rounded-xl flex mb-8 shadow-inner">
+            <button id="tab-daily" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 tab-active">
+                <i class="far fa-calendar-alt"></i>
+                الجدول اليومي
+            </button>
+            <button id="tab-groups" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700">
+                <i class="fas fa-users"></i>
+                جداول المجموعات
+            </button>
+        </div>
+
+        <!-- Content Area -->
+        <div id="content-daily" class="space-y-8">
+            <!-- Daily schedule will be injected here -->
+        </div>
+
+        <div id="content-groups" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Group tables will be injected here -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 border-t border-slate-200 text-center text-slate-400 text-sm">
+            <p>تم التصميم بواسطة Manus &bull; 2026</p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
