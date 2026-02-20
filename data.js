@@ -1,7 +1,7 @@
 const tournamentData = {
   title: "جدول الدورة الرمضانية",
   subtitle: "المسئول عن الموقع والتنظيم مهندس احمد مدحت علوش",
-  groupCount: 0,
+  groupCount: 12,
   matches: [
     { date: "الجمعة 20/2", time: "9:00", group: 1, team1: "نسور مصر", team2: "بلال الصاوي" },
     { date: "الجمعة 20/2", time: "9:45", group: 2, team1: "عزبة يوسف", team2: "الجزيرة" },
