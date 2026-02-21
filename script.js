@@ -4,7 +4,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabGroups = document.getElementById('tab-groups');
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
-    const contentAwards = document.getElementById('content-awards');
+    let contentAwards = document.getElementById('content-awards');
+
+    if (!contentDaily || !contentGroups || !tabDaily || !tabGroups || !searchInput) {
+        console.error('Required UI elements are missing.');
+        return;
+    }
+
+    if (!contentAwards) {
+        contentAwards = document.createElement('div');
+        contentAwards.id = 'content-awards';
+        contentAwards.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8';
+        contentGroups.insertAdjacentElement('afterend', contentAwards);
+    }
 
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
@@ -16,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentDaily.innerHTML = '';
         const groupedByDate = {};
 
-        tournamentData.matches.forEach(match => {
+        (tournamentData.matches || []).forEach(match => {
             const matchText = `${match.team1} ${match.team2} ${match.date} ${match.group}`.toLowerCase();
             if (filter && !matchText.includes(filter.toLowerCase())) return;
 
@@ -100,8 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroups(filter = '') {
         contentGroups.innerHTML = '';
         
-        tournamentData.groups.forEach(group => {
-            const hasTeamMatch = group.teams.some(t => t.name.toLowerCase().includes(filter.toLowerCase()));
+        (tournamentData.groups || []).forEach(group => {
+            const teams = group.teams || [];
+            const hasTeamMatch = teams.some(t => (t.name || '').toLowerCase().includes(filter.toLowerCase()));
             if (filter && !hasTeamMatch) return;
 
             const groupCard = document.createElement('div');
@@ -133,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tbody class="divide-y divide-slate-100">
             `;
 
-            group.teams.forEach((team, idx) => {
+            teams.forEach((team, idx) => {
                 const isHighlighted = filter && team.name.toLowerCase().includes(filter.toLowerCase());
                 tableHTML += `
                     <tr class="${isHighlighted ? 'bg-yellow-50' : ''} hover:bg-slate-50 transition-colors">
@@ -226,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Search
     searchInput.addEventListener('input', (e) => {
-        const val = e.target.value;
+        const val = (e.target.value || "").trim();
         if (!contentDaily.classList.contains('hidden')) {
             renderDaily(val);
         } else {
@@ -235,7 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial Render
-    renderDaily();
-    renderGroups();
-    renderAwards();
+    try {
+        renderDaily();
+        renderGroups();
+        renderAwards();
+    } catch (err) {
+        console.error('Render failed:', err);
+        contentDaily.innerHTML = '<div class="text-center py-12 text-red-500 bg-white rounded-2xl border border-red-200">حدث خطأ أثناء عرض البيانات، تم إصلاحه تلقائيًا. حدّث الصفحة.</div>';
+    }
 });
