@@ -116,17 +116,50 @@ const tournamentData = {
       "group": 3,
       "team1": "الحريفة",
       "team2": "محمود أشرف",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "5",
+      "team1Scorers": [
+        "محمد شريف"
+      ],
+      "team2Scorers": [
+        "أحمد مسعد (هدفان)",
+        "سامح مسعد",
+        "محمد عبد الحميد",
+        "أنور علي"
+      ],
+      "team1YellowCards": [],
+      "team2YellowCards": [
+        "إبراهيم سعد"
+      ],
+      "team1RedCards": [
+        "سعيد التوني (إيقاف مباراة)"
+      ],
+      "team2RedCards": [
+        "محمود أشرف (إيقاف مباراة)"
+      ]
     },
     {
       "date": "السبت 21/2",
       "time": "9:45",
       "group": 9,
       "team1": "شباب أنطون يادس",
-      "team2": "الاتحاد",
-      "score1": "",
-      "score2": ""
+      "team2": "نجوم الحمراء",
+      "score1": "3",
+      "score2": "2",
+      "team1Scorers": [
+        "إسلام أحمد (هدفان)",
+        "عدي فرفور"
+      ],
+      "team2Scorers": [
+        "حازم حمادة",
+        "سعد صبحي"
+      ],
+      "team1YellowCards": [
+        "مزاج علي"
+      ],
+      "team2YellowCards": [
+        "يحيى سعيد"
+      ]
     },
     {
       "date": "السبت 21/2",
@@ -134,8 +167,23 @@ const tournamentData = {
       "group": 1,
       "team1": "كابيتانو",
       "team2": "نسور دفشو",
-      "score1": "",
-      "score2": ""
+      "score1": "5",
+      "score2": "4",
+      "team1Scorers": [
+        "محمد وائل (3 أهداف)",
+        "دريشة (هدفان)"
+      ],
+      "team2Scorers": [
+        "صلاح الفقي (هدفان)",
+        "محمد حاتم (الكوتش) (هدفان)"
+      ],
+      "team1YellowCards": [
+        "محمد وائل",
+        "أمجد سمير"
+      ],
+      "team2YellowCards": [
+        "محمد حاتم (الكوتش)"
+      ]
     },
     {
       "date": "السبت 21/2",
@@ -143,8 +191,19 @@ const tournamentData = {
       "group": 6,
       "team1": "ريال البيضا",
       "team2": "ميدو خليل",
-      "score1": "",
-      "score2": ""
+      "score1": "5",
+      "score2": "0",
+      "team1Scorers": [
+        "يوسف صبحي (3 أهداف)",
+        "محمد السمالوطي",
+        "أحمد فتحي"
+      ],
+      "team2Scorers": [],
+      "team1YellowCards": [
+        "محمد الننوس",
+        "أحمد فتحي"
+      ],
+      "team2YellowCards": []
     },
     {
       "date": "الأحد 22/2",
@@ -430,7 +489,7 @@ const tournamentData = {
       "time": "11:20",
       "group": 9,
       "team1": "عمر جمال",
-      "team2": "الاتحاد",
+      "team2": "نجوم الحمراء",
       "score1": "",
       "score2": ""
     },
@@ -619,7 +678,7 @@ const tournamentData = {
       "time": "9:00",
       "group": 9,
       "team1": "العمدوية",
-      "team2": "الاتحاد",
+      "team2": "نجوم الحمراء",
       "score1": "",
       "score2": ""
     },
@@ -741,25 +800,25 @@ const tournamentData = {
         },
         {
           "name": "نسور دفشو",
-          "played": 0,
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "gf": 4,
+          "ga": 5,
+          "gd": -1,
           "points": 0
         },
         {
           "name": "كابيتانو",
-          "played": 0,
-          "won": 0,
+          "played": 1,
+          "won": 1,
           "lost": 0,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gf": 5,
+          "ga": 4,
+          "gd": 1,
+          "points": 3
         },
         {
           "name": "بلال الصاوي",
@@ -841,25 +900,25 @@ const tournamentData = {
         },
         {
           "name": "الحريفة",
-          "played": 0,
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "gf": 1,
+          "ga": 5,
+          "gd": -4,
           "points": 0
         },
         {
           "name": "محمود أشرف",
-          "played": 0,
-          "won": 0,
+          "played": 1,
+          "won": 1,
           "lost": 0,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gf": 5,
+          "ga": 1,
+          "gd": 4,
+          "points": 3
         },
         {
           "name": "الدراويش",
@@ -980,14 +1039,14 @@ const tournamentData = {
       "teams": [
         {
           "name": "ريال البيضا",
-          "played": 0,
-          "won": 0,
+          "played": 1,
+          "won": 1,
           "lost": 0,
           "draw": 0,
-          "gf": 0,
+          "gf": 5,
           "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gd": 5,
+          "points": 3
         },
         {
           "name": "نجوم أنطون يادس",
@@ -1002,13 +1061,13 @@ const tournamentData = {
         },
         {
           "name": "ميدو خليل",
-          "played": 0,
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
           "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "ga": 5,
+          "gd": -5,
           "points": 0
         },
         {
@@ -1129,26 +1188,26 @@ const tournamentData = {
       "name": "المجموعة 9",
       "teams": [
         {
-          "name": "الاتحاد",
-          "played": 0,
+          "name": "نجوم الحمراء",
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "gf": 2,
+          "ga": 3,
+          "gd": -1,
           "points": 0
         },
         {
           "name": "شباب أنطون يادس",
-          "played": 0,
-          "won": 0,
+          "played": 1,
+          "won": 1,
           "lost": 0,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gf": 3,
+          "ga": 2,
+          "gd": 1,
+          "points": 3
         },
         {
           "name": "عمر جمال",
@@ -1327,10 +1386,10 @@ const tournamentData = {
   ],
   "topScorers": [
     { "name": "خميس الرفاعي", "team": "الجزيرة", "goals": 5 },
-    { "name": "محمد عبد الجيد", "team": "نجوم كفر الدوار", "goals": 2 },
-    { "name": "سعد إبراهيم", "team": "أصدقاء محمد صبحي", "goals": 2 },
-    { "name": "محمود عبده", "team": "نسور مصر", "goals": 1 },
-    { "name": "عبد الوهاب محمد", "team": "الجزيرة", "goals": 1 }
+    { "name": "محمد وائل", "team": "كابيتانو", "goals": 3 },
+    { "name": "يوسف صبحي", "team": "ريال البيضا", "goals": 3 },
+    { "name": "أحمد مسعد", "team": "محمود أشرف", "goals": 2 },
+    { "name": "إسلام أحمد", "team": "شباب أنطون يادس", "goals": 2 }
   ],
   "topGoalkeepers": [
     { "name": "العربي", "team": "نسور مصر", "cleanSheets": 1, "goalsAgainst": 0 },

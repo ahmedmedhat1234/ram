@@ -62,11 +62,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 matchRow.className = 'px-4 py-3 hover:bg-slate-50 transition-colors text-sm';
 
                 const scoreState = getScoreState(match.score1, match.score2);
-                const scorersHTML = (match.scorers && match.scorers.length)
-                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${match.scorers.join('، ')}</div>`
+                const team1Scorers = match.team1Scorers || [];
+                const team2Scorers = match.team2Scorers || [];
+                const legacyScorers = (!team1Scorers.length && !team2Scorers.length) ? (match.scorers || []) : [];
+                const team1YellowCards = match.team1YellowCards || [];
+                const team2YellowCards = match.team2YellowCards || [];
+                const team1RedCards = match.team1RedCards || [];
+                const team2RedCards = match.team2RedCards || [];
+
+                const hasTeamDetails = team1Scorers.length || team2Scorers.length || team1YellowCards.length || team2YellowCards.length || team1RedCards.length || team2RedCards.length;
+
+                const teamDetailsHTML = hasTeamDetails
+                    ? `
+                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
+                                <div class="font-bold text-slate-700 mb-1">${match.team1}</div>
+                                ${team1Scorers.length ? `<div class="text-slate-600"><span class="font-bold">الهدافون:</span> ${team1Scorers.join('، ')}</div>` : '<div class="text-slate-400">لا يوجد مسجلون</div>'}
+                                ${team1YellowCards.length ? `<div class="text-amber-700 mt-1"><span class="font-bold">إنذارات:</span> ${team1YellowCards.join('، ')}</div>` : ''}
+                                ${team1RedCards.length ? `<div class="text-red-700 mt-1"><span class="font-bold">طرد:</span> ${team1RedCards.join('، ')}</div>` : ''}
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
+                                <div class="font-bold text-slate-700 mb-1">${match.team2}</div>
+                                ${team2Scorers.length ? `<div class="text-slate-600"><span class="font-bold">الهدافون:</span> ${team2Scorers.join('، ')}</div>` : '<div class="text-slate-400">لا يوجد مسجلون</div>'}
+                                ${team2YellowCards.length ? `<div class="text-amber-700 mt-1"><span class="font-bold">إنذارات:</span> ${team2YellowCards.join('، ')}</div>` : ''}
+                                ${team2RedCards.length ? `<div class="text-red-700 mt-1"><span class="font-bold">طرد:</span> ${team2RedCards.join('، ')}</div>` : ''}
+                            </div>
+                        </div>
+                    `
                     : '';
-                const cardsHTML = (match.yellowCards && match.yellowCards.length)
-                    ? `<div class="mt-1 text-xs text-amber-700"><span class="font-bold">الإنذارات:</span> ${match.yellowCards.join('، ')}</div>`
+
+                const legacyScorersHTML = legacyScorers.length
+                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${legacyScorers.join('، ')}</div>`
+                    : '';
+
+                const hasTeamCardData = Array.isArray(match.team1YellowCards) || Array.isArray(match.team2YellowCards);
+                const yellowCardsList = hasTeamCardData
+                    ? []
+                    : (match.yellowCards || []);
+                const cardsHTML = yellowCardsList.length
+                    ? `<div class="mt-1 text-xs text-amber-700"><span class="font-bold">الإنذارات:</span> ${yellowCardsList.join('، ')}</div>`
                     : '';
 
                 matchRow.innerHTML = `
@@ -87,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
                             </div>
                         </div>
-                        ${scorersHTML}
+                        ${teamDetailsHTML}
+                        ${legacyScorersHTML}
                         ${cardsHTML}
                     </div>
                 `;
@@ -107,8 +142,44 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroups(filter = '') {
         contentGroups.innerHTML = '';
         
+        const completedMatches = (tournamentData.matches || []).filter(match => match.score1 !== "" && match.score2 !== "");
+
+        const getHeadToHeadScore = (groupId, teamA, teamB) => {
+            const directMatches = completedMatches.filter(match =>
+                Number(match.group) === Number(groupId) &&
+                ((match.team1 === teamA && match.team2 === teamB) || (match.team1 === teamB && match.team2 === teamA))
+            );
+
+            return directMatches.reduce((acc, match) => {
+                const s1 = Number(match.score1);
+                const s2 = Number(match.score2);
+                const aIsTeam1 = match.team1 === teamA;
+                const aGoals = aIsTeam1 ? s1 : s2;
+                const bGoals = aIsTeam1 ? s2 : s1;
+
+                acc.gd += (aGoals - bGoals);
+                if (aGoals > bGoals) acc.points += 3;
+                else if (aGoals === bGoals) acc.points += 1;
+                return acc;
+            }, { points: 0, gd: 0, played: directMatches.length });
+        };
+
         (tournamentData.groups || []).forEach(group => {
-            const teams = group.teams || [];
+            const teams = [...(group.teams || [])].sort((a, b) => {
+                if ((b.points || 0) !== (a.points || 0)) return (b.points || 0) - (a.points || 0);
+                if ((b.gd || 0) !== (a.gd || 0)) return (b.gd || 0) - (a.gd || 0);
+
+                const h2hA = getHeadToHeadScore(group.id, a.name, b.name);
+                const h2hB = getHeadToHeadScore(group.id, b.name, a.name);
+
+                if (h2hA.played > 0 || h2hB.played > 0) {
+                    if (h2hB.points !== h2hA.points) return h2hB.points - h2hA.points;
+                    if (h2hB.gd !== h2hA.gd) return h2hB.gd - h2hA.gd;
+                }
+
+                if ((b.gf || 0) !== (a.gf || 0)) return (b.gf || 0) - (a.gf || 0);
+                return (a.name || '').localeCompare((b.name || ''), 'ar');
+            });
             const hasTeamMatch = teams.some(t => (t.name || '').toLowerCase().includes(filter.toLowerCase()));
             if (filter && !hasTeamMatch) return;
 
@@ -173,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAwards() {
-        const topScorers = tournamentData.topScorers || [];
+        const topScorers = [...(tournamentData.topScorers || [])].sort((a, b) => (b.goals || 0) - (a.goals || 0));
         const topGoalkeepers = tournamentData.topGoalkeepers || [];
 
         const scorerRows = topScorers.map((player, idx) => `
