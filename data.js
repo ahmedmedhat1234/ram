@@ -1386,10 +1386,10 @@ const tournamentData = {
   ],
   "topScorers": [
     { "name": "خميس الرفاعي", "team": "الجزيرة", "goals": 5 },
-    { "name": "محمد عبد الجيد", "team": "نجوم كفر الدوار", "goals": 2 },
-    { "name": "سعد إبراهيم", "team": "أصدقاء محمد صبحي", "goals": 2 },
-    { "name": "محمود عبده", "team": "نسور مصر", "goals": 1 },
-    { "name": "عبد الوهاب محمد", "team": "الجزيرة", "goals": 1 }
+    { "name": "محمد وائل", "team": "كابيتانو", "goals": 3 },
+    { "name": "يوسف صبحي", "team": "ريال البيضا", "goals": 3 },
+    { "name": "أحمد مسعد", "team": "محمود أشرف", "goals": 2 },
+    { "name": "إسلام أحمد", "team": "شباب أنطون يادس", "goals": 2 }
   ],
   "topGoalkeepers": [
     { "name": "العربي", "team": "نسور مصر", "cleanSheets": 1, "goalsAgainst": 0 },
