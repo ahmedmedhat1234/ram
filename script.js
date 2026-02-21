@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabGroups = document.getElementById('tab-groups');
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
+    const contentAwards = document.getElementById('content-awards');
 
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
@@ -40,20 +41,33 @@ document.addEventListener('DOMContentLoaded', () => {
             groupedByDate[date].forEach(match => {
                 const matchRow = document.createElement('div');
                 matchRow.className = 'px-4 py-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-sm';
+                const scorersHTML = (match.scorers && match.scorers.length)
+                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${match.scorers.join('، ')}</div>`
+                    : '';
+                const cardsHTML = (match.yellowCards && match.yellowCards.length)
+                    ? `<div class="mt-1 text-xs text-amber-700"><span class="font-bold">الإنذارات:</span> ${match.yellowCards.join('، ')}</div>`
+                    : '';
+
                 matchRow.innerHTML = `
-                    <div class="flex items-center gap-2 flex-1 min-w-0">
-                        <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
-                        <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
-                    </div>
-                    
-                    <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
-                        <span class="font-bold text-blue-700 text-xs">${match.time}</span>
-                        <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
-                        <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
-                        <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
+                    <div class="w-full">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
+                                <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                            </div>
+                            
+                            <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
+                                <span class="font-bold text-blue-700 text-xs">${match.time}</span>
+                                <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
+                                <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                                <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
+                            </div>
+                        </div>
+                        ${scorersHTML}
+                        ${cardsHTML}
                     </div>
                 `;
                 matchesList.appendChild(matchRow);
@@ -136,6 +150,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
+    function renderAwards() {
+        const topScorers = tournamentData.topScorers || [];
+        const topGoalkeepers = tournamentData.topGoalkeepers || [];
+
+        const scorerRows = topScorers.map((player, idx) => `
+            <tr class="border-b border-slate-100">
+                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
+                <td class="py-2 text-slate-500">${player.team}</td>
+                <td class="py-2 font-black text-blue-700 text-center">${player.goals}</td>
+            </tr>
+        `).join('');
+
+        const keeperRows = topGoalkeepers.map((keeper, idx) => `
+            <tr class="border-b border-slate-100">
+                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${keeper.name}</td>
+                <td class="py-2 text-slate-500">${keeper.team}</td>
+                <td class="py-2 font-black text-emerald-700 text-center">${keeper.cleanSheets}</td>
+            </tr>
+        `).join('');
+
+        contentAwards.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 هدافين</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">الأهداف</th></tr></thead>
+                    <tbody>${scorerRows}</tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 حراس</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-slate-500"><th class="text-right pb-2">الحارس</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">كلين شيت</th></tr></thead>
+                    <tbody>${keeperRows}</tbody>
+                </table>
+            </div>
+        `;
+    }
+
     // Tab Switching
     tabDaily.addEventListener('click', () => {
         tabDaily.classList.add('tab-active', 'text-blue-600');
@@ -170,4 +223,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Render
     renderDaily();
     renderGroups();
+    renderAwards();
 });
