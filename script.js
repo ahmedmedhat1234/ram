@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentAwards.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8';
         contentGroups.insertAdjacentElement('afterend', contentAwards);
     }
+    const contentAwards = document.getElementById('content-awards');
 
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
@@ -94,6 +95,34 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             ${team2Events}
                         </div>
+                matchRow.className = 'px-4 py-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-sm';
+                const scorersHTML = (match.scorers && match.scorers.length)
+                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${match.scorers.join('، ')}</div>`
+                    : '';
+                const cardsHTML = (match.yellowCards && match.yellowCards.length)
+                    ? `<div class="mt-1 text-xs text-amber-700"><span class="font-bold">الإنذارات:</span> ${match.yellowCards.join('، ')}</div>`
+                    : '';
+
+                matchRow.innerHTML = `
+                    <div class="w-full">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
+                                <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                            </div>
+                            
+                            <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
+                                <span class="font-bold text-blue-700 text-xs">${match.time}</span>
+                                <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
+                                <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                                <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
+                            </div>
+                        </div>
+                        ${scorersHTML}
+                        ${cardsHTML}
                     </div>
                 `;
                 matchesList.appendChild(matchRow);
@@ -256,4 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Render failed:', err);
         contentDaily.innerHTML = '<div class="text-center py-12 text-red-500 bg-white rounded-2xl border border-red-200">حدث خطأ أثناء عرض البيانات، تم إصلاحه تلقائيًا. حدّث الصفحة.</div>';
     }
+    renderDaily();
+    renderGroups();
+    renderAwards();
 });

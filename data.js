@@ -22,6 +22,15 @@ const tournamentData = {
         "العربي"
       ],
       "team2YellowCards": []
+      "scorers": [
+        "محمود عبده",
+        "فرمينيو السرس",
+        "نصه السرس"
+      ],
+      "yellowCards": [
+        "محمود عبده (نسور مصر)",
+        "العربي (نسور مصر)"
+      ]
     },
     {
       "date": "الجمعة 20/2",
@@ -42,6 +51,14 @@ const tournamentData = {
       "team1YellowCards": [],
       "team2YellowCards": [
         "عبد الوهاب محمد"
+      "scorers": [
+        "خميس الرفاعي (5 أهداف)",
+        "عبد الوهاب محمد",
+        "مصطفى السيد",
+        "يوسف تامر (عزبة يوسف)"
+      ],
+      "yellowCards": [
+        "عبد الوهاب محمد (الجزيرة)"
       ]
     },
     {
@@ -59,6 +76,11 @@ const tournamentData = {
       "team2Scorers": [],
       "team1YellowCards": [],
       "team2YellowCards": []
+      "scorers": [
+        "سعد إبراهيم (هدفان)",
+        "عبد الله عيد"
+      ],
+      "yellowCards": []
     },
     {
       "date": "الجمعة 20/2",
@@ -78,6 +100,14 @@ const tournamentData = {
         "زيزو"
       ],
       "team2YellowCards": []
+      "scorers": [
+        "محمد عبد الجيد (هدفان)",
+        "بحة",
+        "عمر جلال"
+      ],
+      "yellowCards": [
+        "زيزو (فريق زيزو)"
+      ]
     },
     {
       "date": "السبت 21/2",
