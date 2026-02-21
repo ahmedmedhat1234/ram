@@ -17,12 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
         contentAwards.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8';
         contentGroups.insertAdjacentElement('afterend', contentAwards);
     }
-    const contentAwards = document.getElementById('content-awards');
 
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
     document.getElementById('main-subtitle').textContent = tournamentData.subtitle;
-    document.getElementById('group-count').textContent = "12";
+    document.getElementById('group-count').textContent = tournamentData.groupCount || "12";
 
     // Render Daily Schedule
     function renderDaily(filter = '') {
@@ -37,20 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
             groupedByDate[match.date].push(match);
         });
 
-        const getScoreState = (scoreA, scoreB) => {
-            const a = Number(scoreA);
-            const b = Number(scoreB);
-            if (Number.isNaN(a) || Number.isNaN(b)) return { team1: 'bg-slate-100 text-slate-600', team2: 'bg-slate-100 text-slate-600' };
-            if (a > b) return { team1: 'bg-emerald-100 text-emerald-700 border border-emerald-200', team2: 'bg-red-100 text-red-700 border border-red-200' };
-            if (a < b) return { team1: 'bg-red-100 text-red-700 border border-red-200', team2: 'bg-emerald-100 text-emerald-700 border border-emerald-200' };
+        const getScoreState = (score1, score2) => {
+            if (score1 === "" || score2 === "") return { team1: 'bg-slate-100 text-slate-600', team2: 'bg-slate-100 text-slate-600' };
+            const s1 = parseInt(score1);
+            const s2 = parseInt(score2);
+            if (s1 > s2) return { team1: 'bg-emerald-100 text-emerald-700 border border-emerald-200', team2: 'bg-red-100 text-red-700 border border-red-200' };
+            if (s1 < s2) return { team1: 'bg-red-100 text-red-700 border border-red-200', team2: 'bg-emerald-100 text-emerald-700 border border-emerald-200' };
             return { team1: 'bg-blue-100 text-blue-700 border border-blue-200', team2: 'bg-blue-100 text-blue-700 border border-blue-200' };
-        };
-
-        const renderTeamEvents = (scorers, cards, align = 'right') => {
-            const goalHTML = (scorers || []).map(name => `<span class="inline-block text-[11px] px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">⚽ ${name}</span>`).join(' ');
-            const cardHTML = (cards || []).map(name => `<span class="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200"><span class="inline-block w-2.5 h-2.5 bg-yellow-400 border border-yellow-500"></span>${name}</span>`).join(' ');
-            if (!goalHTML && !cardHTML) return '';
-            return `<div class="mt-2 flex flex-wrap gap-1 ${align === 'left' ? 'justify-start' : 'justify-end'}">${goalHTML} ${cardHTML}</div>`;
         };
 
         Object.keys(groupedByDate).forEach(date => {
@@ -70,32 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 matchRow.className = 'px-4 py-3 hover:bg-slate-50 transition-colors text-sm';
 
                 const scoreState = getScoreState(match.score1, match.score2);
-                const team1Events = renderTeamEvents(match.team1Scorers, match.team1YellowCards, 'left');
-                const team2Events = renderTeamEvents(match.team2Scorers, match.team2YellowCards, 'right');
-
-                matchRow.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
-                                <span class="w-9 h-9 text-center leading-9 rounded-lg font-black text-sm ${scoreState.team1}">${match.score1 || '-'}</span>
-                            </div>
-                            ${team1Events}
-                        </div>
-
-                        <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
-                            <span class="font-bold text-blue-700 text-xs">${match.time}</span>
-                            <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
-                        </div>
-
-                        <div class="flex-1 min-w-0 text-right">
-                            <div class="flex items-center gap-2 justify-end">
-                                <span class="w-9 h-9 text-center leading-9 rounded-lg font-black text-sm ${scoreState.team2}">${match.score2 || '-'}</span>
-                                <span class="font-semibold text-slate-800 truncate">${match.team2}</span>
-                            </div>
-                            ${team2Events}
-                        </div>
-                matchRow.className = 'px-4 py-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-sm';
                 const scorersHTML = (match.scorers && match.scorers.length)
                     ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${match.scorers.join('، ')}</div>`
                     : '';
@@ -108,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex items-center gap-2 flex-1 min-w-0">
                                 <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
-                                <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                                <span class="w-8 h-8 flex items-center justify-center rounded-lg font-bold text-xs flex-shrink-0 ${scoreState.team1}">${match.score1 || '-'}</span>
                             </div>
                             
                             <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
@@ -117,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                             
                             <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
-                                <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
+                                <span class="w-8 h-8 flex items-center justify-center rounded-lg font-bold text-xs flex-shrink-0 ${scoreState.team2}">${match.score2 || '-'}</span>
                                 <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
                             </div>
                         </div>
@@ -206,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     function renderAwards() {
         const topScorers = tournamentData.topScorers || [];
         const topGoalkeepers = tournamentData.topGoalkeepers || [];
@@ -247,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tab Switching
     tabDaily.addEventListener('click', () => {
-        tabDaily.classList.add('tab-active', 'text-blue-600');
+        tabDaily.classList.add('tab-active');
         tabDaily.classList.remove('text-slate-500');
-        tabGroups.classList.remove('tab-active', 'text-blue-600');
+        tabGroups.classList.remove('tab-active');
         tabGroups.classList.add('text-slate-500');
         contentDaily.classList.remove('hidden');
         contentGroups.classList.add('hidden');
@@ -257,9 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     tabGroups.addEventListener('click', () => {
-        tabGroups.classList.add('tab-active', 'text-blue-600');
+        tabGroups.classList.add('tab-active');
         tabGroups.classList.remove('text-slate-500');
-        tabDaily.classList.remove('tab-active', 'text-blue-600');
+        tabDaily.classList.remove('tab-active');
         tabDaily.classList.add('text-slate-500');
         contentGroups.classList.remove('hidden');
         contentDaily.classList.add('hidden');
@@ -283,9 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAwards();
     } catch (err) {
         console.error('Render failed:', err);
-        contentDaily.innerHTML = '<div class="text-center py-12 text-red-500 bg-white rounded-2xl border border-red-200">حدث خطأ أثناء عرض البيانات، تم إصلاحه تلقائيًا. حدّث الصفحة.</div>';
+        contentDaily.innerHTML = '<div class="text-center py-12 text-red-500 bg-white rounded-2xl border border-red-200">حدث خطأ أثناء عرض البيانات.</div>';
     }
-    renderDaily();
-    renderGroups();
-    renderAwards();
 });

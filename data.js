@@ -21,7 +21,7 @@ const tournamentData = {
         "محمود عبده",
         "العربي"
       ],
-      "team2YellowCards": []
+      "team2YellowCards": [],
       "scorers": [
         "محمود عبده",
         "فرمينيو السرس",
@@ -51,6 +51,7 @@ const tournamentData = {
       "team1YellowCards": [],
       "team2YellowCards": [
         "عبد الوهاب محمد"
+      ],
       "scorers": [
         "خميس الرفاعي (5 أهداف)",
         "عبد الوهاب محمد",
@@ -75,7 +76,7 @@ const tournamentData = {
       ],
       "team2Scorers": [],
       "team1YellowCards": [],
-      "team2YellowCards": []
+      "team2YellowCards": [],
       "scorers": [
         "سعد إبراهيم (هدفان)",
         "عبد الله عيد"
@@ -99,7 +100,7 @@ const tournamentData = {
       "team1YellowCards": [
         "زيزو"
       ],
-      "team2YellowCards": []
+      "team2YellowCards": [],
       "scorers": [
         "محمد عبد الجيد (هدفان)",
         "بحة",
