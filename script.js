@@ -91,16 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     `
                     : '';
 
-                const legacyScorersHTML = legacyScorers.length
-                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${legacyScorers.join('، ')}</div>`
-                    : '';
-
-                const hasTeamCardData = Array.isArray(match.team1YellowCards) || Array.isArray(match.team2YellowCards);
-                const yellowCardsList = hasTeamCardData
-                    ? []
-                    : (match.yellowCards || []);
-                const cardsHTML = yellowCardsList.length
-                    ? `<div class="mt-1 text-xs text-amber-700"><span class="font-bold">الإنذارات:</span> ${yellowCardsList.join('، ')}</div>`
                 const team1ScorersHTML = (match.team1Scorers && match.team1Scorers.length)
                     ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">${match.team1}:</span> ${match.team1Scorers.join('، ')}</div>`
                     : '';
