@@ -11,6 +11,17 @@ const tournamentData = {
       "team2": "بلال الصاوي",
       "score1": "3",
       "score2": "0",
+      "team1Scorers": [
+        "محمود عبده",
+        "فرمينيو السرس",
+        "نصه السرس"
+      ],
+      "team2Scorers": [],
+      "team1YellowCards": [
+        "محمود عبده",
+        "العربي"
+      ],
+      "team2YellowCards": []
       "scorers": [
         "محمود عبده",
         "فرمينيو السرس",
@@ -29,6 +40,17 @@ const tournamentData = {
       "team2": "الجزيرة",
       "score1": "1",
       "score2": "7",
+      "team1Scorers": [
+        "يوسف تامر"
+      ],
+      "team2Scorers": [
+        "خميس الرفاعي (5 أهداف)",
+        "عبد الوهاب محمد",
+        "مصطفى السيد"
+      ],
+      "team1YellowCards": [],
+      "team2YellowCards": [
+        "عبد الوهاب محمد"
       "scorers": [
         "خميس الرفاعي (5 أهداف)",
         "عبد الوهاب محمد",
@@ -47,6 +69,13 @@ const tournamentData = {
       "team2": "الدراويش",
       "score1": "3",
       "score2": "0",
+      "team1Scorers": [
+        "سعد إبراهيم (هدفان)",
+        "عبد الله عيد"
+      ],
+      "team2Scorers": [],
+      "team1YellowCards": [],
+      "team2YellowCards": []
       "scorers": [
         "سعد إبراهيم (هدفان)",
         "عبد الله عيد"
@@ -61,6 +90,16 @@ const tournamentData = {
       "team2": "نجوم كفر الدوار",
       "score1": "0",
       "score2": "4",
+      "team1Scorers": [],
+      "team2Scorers": [
+        "محمد عبد الجيد (هدفان)",
+        "بحة",
+        "عمر جلال"
+      ],
+      "team1YellowCards": [
+        "زيزو"
+      ],
+      "team2YellowCards": []
       "scorers": [
         "محمد عبد الجيد (هدفان)",
         "بحة",
