@@ -91,32 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `
                     : '';
 
-                const team1ScorersHTML = (match.team1Scorers && match.team1Scorers.length)
-                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">${match.team1}:</span> ${match.team1Scorers.join('، ')}</div>`
-                    : '';
-                const team2ScorersHTML = (match.team2Scorers && match.team2Scorers.length)
-                    ? `<div class="mt-1 text-xs text-slate-600"><span class="font-bold text-slate-700">${match.team2}:</span> ${match.team2Scorers.join('، ')}</div>`
-                    : '';
-                const legacyScorersHTML = (!match.team1Scorers && !match.team2Scorers && match.scorers && match.scorers.length)
-                    ? `<div class="mt-2 text-xs text-slate-600"><span class="font-bold text-slate-700">الهدافون:</span> ${match.scorers.join('، ')}</div>`
-                    : '';
-                const hasTeamCardData = Array.isArray(match.team1YellowCards) || Array.isArray(match.team2YellowCards);
-                const yellowCardsList = hasTeamCardData
-                    ? [
-                        ...((match.team1YellowCards || []).map(player => `${player} (${match.team1})`)),
-                        ...((match.team2YellowCards || []).map(player => `${player} (${match.team2})`))
-                    ]
-                    : (match.yellowCards || []);
-                const redCardsList = [
-                    ...((match.team1RedCards || []).map(player => `${player} (${match.team1})`)),
-                    ...((match.team2RedCards || []).map(player => `${player} (${match.team2})`))
-                ];
-                const cardsHTML = yellowCardsList.length
-                    ? `<div class="mt-1 text-xs text-amber-700"><span class="font-bold">الإنذارات:</span> ${yellowCardsList.join('، ')}</div>`
-                    : '';
-                const redCardsHTML = redCardsList.length
-                    ? `<div class="mt-1 text-xs text-red-700"><span class="font-bold">حالات الطرد:</span> ${redCardsList.join('، ')}</div>`
-                    : '';
+
 
                 matchRow.innerHTML = `
                     <div class="w-full">
@@ -137,11 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                         ${teamDetailsHTML}
-                        ${team1ScorersHTML}
-                        ${team2ScorersHTML}
-                        ${legacyScorersHTML}
-                        ${cardsHTML}
-                        ${redCardsHTML}
                     </div>
                 `;
                 matchesList.appendChild(matchRow);
