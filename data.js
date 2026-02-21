@@ -9,8 +9,17 @@ const tournamentData = {
       "group": 1,
       "team1": "نسور مصر",
       "team2": "بلال الصاوي",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "0",
+      "scorers": [
+        "محمود عبده",
+        "فرمينيو السرس",
+        "نصه السرس"
+      ],
+      "yellowCards": [
+        "محمود عبده (نسور مصر)",
+        "العربي (نسور مصر)"
+      ]
     },
     {
       "date": "الجمعة 20/2",
@@ -18,8 +27,17 @@ const tournamentData = {
       "group": 2,
       "team1": "عزبة يوسف",
       "team2": "الجزيرة",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "7",
+      "scorers": [
+        "خميس الرفاعي (5 أهداف)",
+        "عبد الوهاب محمد",
+        "مصطفى السيد",
+        "يوسف تامر (عزبة يوسف)"
+      ],
+      "yellowCards": [
+        "عبد الوهاب محمد (الجزيرة)"
+      ]
     },
     {
       "date": "الجمعة 20/2",
@@ -27,8 +45,13 @@ const tournamentData = {
       "group": 3,
       "team1": "أصدقاء محمد صبحي",
       "team2": "الدراويش",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "0",
+      "scorers": [
+        "سعد إبراهيم (هدفان)",
+        "عبد الله عيد"
+      ],
+      "yellowCards": []
     },
     {
       "date": "الجمعة 20/2",
@@ -36,8 +59,16 @@ const tournamentData = {
       "group": 4,
       "team1": "زيزو",
       "team2": "نجوم كفر الدوار",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "4",
+      "scorers": [
+        "محمد عبد الجيد (هدفان)",
+        "بحة",
+        "عمر جلال"
+      ],
+      "yellowCards": [
+        "زيزو (فريق زيزو)"
+      ]
     },
     {
       "date": "السبت 21/2",
@@ -658,29 +689,18 @@ const tournamentData = {
       "name": "المجموعة 1",
       "teams": [
         {
-          "name": "بلال الصاوي",
-          "played": 0,
-          "won": 0,
+          "name": "نسور مصر",
+          "played": 1,
+          "won": 1,
           "lost": 0,
           "draw": 0,
-          "gf": 0,
+          "gf": 3,
           "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gd": 3,
+          "points": 3
         },
         {
           "name": "نسور دفشو",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "نسور مصر",
           "played": 0,
           "won": 0,
           "lost": 0,
@@ -700,6 +720,17 @@ const tournamentData = {
           "ga": 0,
           "gd": 0,
           "points": 0
+        },
+        {
+          "name": "بلال الصاوي",
+          "played": 1,
+          "won": 0,
+          "lost": 1,
+          "draw": 0,
+          "gf": 0,
+          "ga": 3,
+          "gd": -3,
+          "points": 0
         }
       ]
     },
@@ -707,6 +738,17 @@ const tournamentData = {
       "id": 2,
       "name": "المجموعة 2",
       "teams": [
+        {
+          "name": "الجزيرة",
+          "played": 1,
+          "won": 1,
+          "lost": 0,
+          "draw": 0,
+          "gf": 7,
+          "ga": 1,
+          "gd": 6,
+          "points": 3
+        },
         {
           "name": "نجوم أبوشادي",
           "played": 0,
@@ -731,24 +773,13 @@ const tournamentData = {
         },
         {
           "name": "عزبة يوسف",
-          "played": 0,
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "الجزيرة",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "gf": 1,
+          "ga": 7,
+          "gd": -6,
           "points": 0
         }
       ]
@@ -757,6 +788,17 @@ const tournamentData = {
       "id": 3,
       "name": "المجموعة 3",
       "teams": [
+        {
+          "name": "أصدقاء محمد صبحي",
+          "played": 1,
+          "won": 1,
+          "lost": 0,
+          "draw": 0,
+          "gf": 3,
+          "ga": 0,
+          "gd": 3,
+          "points": 3
+        },
         {
           "name": "الحريفة",
           "played": 0,
@@ -781,24 +823,13 @@ const tournamentData = {
         },
         {
           "name": "الدراويش",
-          "played": 0,
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
           "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
-        },
-        {
-          "name": "أصدقاء محمد صبحي",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
-          "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "ga": 3,
+          "gd": -3,
           "points": 0
         }
       ]
@@ -808,15 +839,15 @@ const tournamentData = {
       "name": "المجموعة 4",
       "teams": [
         {
-          "name": "زيزو",
-          "played": 0,
-          "won": 0,
+          "name": "نجوم كفر الدوار",
+          "played": 1,
+          "won": 1,
           "lost": 0,
           "draw": 0,
-          "gf": 0,
+          "gf": 4,
           "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gd": 4,
+          "points": 3
         },
         {
           "name": "شباب الوراقية",
@@ -841,14 +872,14 @@ const tournamentData = {
           "points": 0
         },
         {
-          "name": "نجوم كفر الدوار",
-          "played": 0,
+          "name": "زيزو",
+          "played": 1,
           "won": 0,
-          "lost": 0,
+          "lost": 1,
           "draw": 0,
           "gf": 0,
-          "ga": 0,
-          "gd": 0,
+          "ga": 4,
+          "gd": -4,
           "points": 0
         }
       ]
@@ -1253,5 +1284,19 @@ const tournamentData = {
         }
       ]
     }
+  ],
+  "topScorers": [
+    { "name": "خميس الرفاعي", "team": "الجزيرة", "goals": 5 },
+    { "name": "محمد عبد الجيد", "team": "نجوم كفر الدوار", "goals": 2 },
+    { "name": "سعد إبراهيم", "team": "أصدقاء محمد صبحي", "goals": 2 },
+    { "name": "محمود عبده", "team": "نسور مصر", "goals": 1 },
+    { "name": "عبد الوهاب محمد", "team": "الجزيرة", "goals": 1 }
+  ],
+  "topGoalkeepers": [
+    { "name": "العربي", "team": "نسور مصر", "cleanSheets": 1, "goalsAgainst": 0 },
+    { "name": "سعيد هاني", "team": "نجوم كفر الدوار", "cleanSheets": 1, "goalsAgainst": 0 },
+    { "name": "حمصه", "team": "أصدقاء محمد صبحي", "cleanSheets": 1, "goalsAgainst": 0 },
+    { "name": "عبدالرحمن", "team": "الجزيرة", "cleanSheets": 0, "goalsAgainst": 1 },
+    { "name": "يوسف تامر", "team": "عزبة يوسف", "cleanSheets": 0, "goalsAgainst": 7 }
   ]
 };
