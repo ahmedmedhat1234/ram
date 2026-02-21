@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabGroups = document.getElementById('tab-groups');
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
+    const contentAwards = document.getElementById('content-awards');
 
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
@@ -14,21 +15,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDaily(filter = '') {
         contentDaily.innerHTML = '';
         const groupedByDate = {};
-        
+
         tournamentData.matches.forEach(match => {
             const matchText = `${match.team1} ${match.team2} ${match.date} ${match.group}`.toLowerCase();
             if (filter && !matchText.includes(filter.toLowerCase())) return;
-            
+
             if (!groupedByDate[match.date]) groupedByDate[match.date] = [];
             groupedByDate[match.date].push(match);
         });
 
-        const dates = Object.keys(groupedByDate);
-        
-        dates.forEach(date => {
+        const getScoreState = (scoreA, scoreB) => {
+            const a = Number(scoreA);
+            const b = Number(scoreB);
+            if (Number.isNaN(a) || Number.isNaN(b)) return { team1: 'bg-slate-100 text-slate-600', team2: 'bg-slate-100 text-slate-600' };
+            if (a > b) return { team1: 'bg-emerald-100 text-emerald-700 border border-emerald-200', team2: 'bg-red-100 text-red-700 border border-red-200' };
+            if (a < b) return { team1: 'bg-red-100 text-red-700 border border-red-200', team2: 'bg-emerald-100 text-emerald-700 border border-emerald-200' };
+            return { team1: 'bg-blue-100 text-blue-700 border border-blue-200', team2: 'bg-blue-100 text-blue-700 border border-blue-200' };
+        };
+
+        const renderTeamEvents = (scorers, cards, align = 'right') => {
+            const goalHTML = (scorers || []).map(name => `<span class="inline-block text-[11px] px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">⚽ ${name}</span>`).join(' ');
+            const cardHTML = (cards || []).map(name => `<span class="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200"><span class="inline-block w-2.5 h-2.5 bg-yellow-400 border border-yellow-500"></span>${name}</span>`).join(' ');
+            if (!goalHTML && !cardHTML) return '';
+            return `<div class="mt-2 flex flex-wrap gap-1 ${align === 'left' ? 'justify-start' : 'justify-end'}">${goalHTML} ${cardHTML}</div>`;
+        };
+
+        Object.keys(groupedByDate).forEach(date => {
             const dateSection = document.createElement('div');
             dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8';
-            
+
             const dateHeader = document.createElement('div');
             dateHeader.className = 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-6 py-3 font-bold text-base flex items-center gap-3';
             dateHeader.innerHTML = `<i class="far fa-calendar-check"></i> ${date}`;
@@ -36,34 +51,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const matchesList = document.createElement('div');
             matchesList.className = 'divide-y-2 divide-slate-100';
-            
+
             groupedByDate[date].forEach(match => {
                 const matchRow = document.createElement('div');
-                matchRow.className = 'px-4 py-3 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors text-sm';
+                matchRow.className = 'px-4 py-3 hover:bg-slate-50 transition-colors text-sm';
+
+                const scoreState = getScoreState(match.score1, match.score2);
+                const team1Events = renderTeamEvents(match.team1Scorers, match.team1YellowCards, 'left');
+                const team2Events = renderTeamEvents(match.team2Scorers, match.team2YellowCards, 'right');
+
                 matchRow.innerHTML = `
-                    <div class="flex items-center gap-2 flex-1 min-w-0">
-                        <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
-                        <input type="text" value="${match.score1 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
-                    </div>
-                    
-                    <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
-                        <span class="font-bold text-blue-700 text-xs">${match.time}</span>
-                        <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
-                        <input type="text" value="${match.score2 || ''}" placeholder="-" class="w-8 h-8 text-center bg-slate-100 border border-slate-300 rounded-lg font-bold text-blue-700 focus:border-blue-500 focus:outline-none text-xs flex-shrink-0">
-                        <span class="font-semibold text-slate-800 truncate text-right">${match.team2}</span>
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-slate-800 truncate">${match.team1}</span>
+                                <span class="w-9 h-9 text-center leading-9 rounded-lg font-black text-sm ${scoreState.team1}">${match.score1 || '-'}</span>
+                            </div>
+                            ${team1Events}
+                        </div>
+
+                        <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
+                            <span class="font-bold text-blue-700 text-xs">${match.time}</span>
+                            <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
+                        </div>
+
+                        <div class="flex-1 min-w-0 text-right">
+                            <div class="flex items-center gap-2 justify-end">
+                                <span class="w-9 h-9 text-center leading-9 rounded-lg font-black text-sm ${scoreState.team2}">${match.score2 || '-'}</span>
+                                <span class="font-semibold text-slate-800 truncate">${match.team2}</span>
+                            </div>
+                            ${team2Events}
+                        </div>
                     </div>
                 `;
                 matchesList.appendChild(matchRow);
             });
-            
+
             dateSection.appendChild(matchesList);
             contentDaily.appendChild(dateSection);
         });
 
-        if (dates.length === 0) {
+        if (!Object.keys(groupedByDate).length) {
             contentDaily.innerHTML = '<div class="text-center py-12 text-slate-400 bg-white rounded-2xl border-2 border-dashed border-slate-200">لا توجد نتائج تطابق بحثك</div>';
         }
     }
@@ -136,6 +164,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
+    function renderAwards() {
+        const topScorers = tournamentData.topScorers || [];
+        const topGoalkeepers = tournamentData.topGoalkeepers || [];
+
+        const scorerRows = topScorers.map((player, idx) => `
+            <tr class="border-b border-slate-100">
+                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
+                <td class="py-2 text-slate-500">${player.team}</td>
+                <td class="py-2 font-black text-blue-700 text-center">${player.goals}</td>
+            </tr>
+        `).join('');
+
+        const keeperRows = topGoalkeepers.map((keeper, idx) => `
+            <tr class="border-b border-slate-100">
+                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${keeper.name}</td>
+                <td class="py-2 text-slate-500">${keeper.team}</td>
+                <td class="py-2 font-black text-emerald-700 text-center">${keeper.cleanSheets}</td>
+            </tr>
+        `).join('');
+
+        contentAwards.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 هدافين</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">الأهداف</th></tr></thead>
+                    <tbody>${scorerRows}</tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 حراس</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-slate-500"><th class="text-right pb-2">الحارس</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">كلين شيت</th></tr></thead>
+                    <tbody>${keeperRows}</tbody>
+                </table>
+            </div>
+        `;
+    }
+
     // Tab Switching
     tabDaily.addEventListener('click', () => {
         tabDaily.classList.add('tab-active', 'text-blue-600');
@@ -170,4 +237,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Render
     renderDaily();
     renderGroups();
+    renderAwards();
 });
