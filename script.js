@@ -62,13 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 matchRow.className = 'px-4 py-3 hover:bg-slate-50 transition-colors text-sm';
 
                 const scoreState = getScoreState(match.score1, match.score2);
-                const team1Scorers = match.team1Scorers || [];
-                const team2Scorers = match.team2Scorers || [];
-                const legacyScorers = (!team1Scorers.length && !team2Scorers.length) ? (match.scorers || []) : [];
-                const team1YellowCards = match.team1YellowCards || [];
-                const team2YellowCards = match.team2YellowCards || [];
-                const team1RedCards = match.team1RedCards || [];
-                const team2RedCards = match.team2RedCards || [];
+                const team1Scorers = [...new Set(match.team1Scorers || [])];
+                const team2Scorers = [...new Set(match.team2Scorers || [])];
+                const team1YellowCards = [...new Set(match.team1YellowCards || [])];
+                const team2YellowCards = [...new Set(match.team2YellowCards || [])];
+                const team1RedCards = [...new Set(match.team1RedCards || [])];
+                const team2RedCards = [...new Set(match.team2RedCards || [])];
 
                 const hasTeamDetails = team1Scorers.length || team2Scorers.length || team1YellowCards.length || team2YellowCards.length || team1RedCards.length || team2RedCards.length;
 
