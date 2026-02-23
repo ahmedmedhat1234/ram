@@ -398,6 +398,18 @@ const tournamentData = {
     },
     {
       "date": "الثلاثاء 24/2",
+<<<<<<< codex/update-match-schedule-and-times-kbcxy6
+=======
+      "time": "8:30",
+      "group": 9,
+      "team1": "العمدوية",
+      "team2": "عمر جمال",
+      "score1": "",
+      "score2": ""
+    },
+    {
+      "date": "الثلاثاء 24/2",
+>>>>>>> main
       "time": "9:10",
       "group": 6,
       "team1": "ميدو خليل",
@@ -780,6 +792,7 @@ const tournamentData = {
       "group": 7,
       "team1": "عتمان",
       "team2": "أصدقاء فتح الله",
+<<<<<<< codex/update-match-schedule-and-times-kbcxy6
       "score1": "",
       "score2": ""
     },
@@ -789,6 +802,8 @@ const tournamentData = {
       "group": 8,
       "team1": "الجديدة",
       "team2": "علي لمونه",
+=======
+>>>>>>> main
       "score1": "",
       "score2": ""
     },
