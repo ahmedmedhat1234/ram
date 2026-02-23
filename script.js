@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
                                 <span class="font-bold text-blue-700 text-xs">${match.time}</span>
                                 <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
+                                ${match.status ? `<span class="text-[9px] bg-amber-500 text-white px-2 py-0.5 rounded font-bold">${match.status}</span>` : ''}
                             </div>
                             
                             <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
@@ -233,6 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAwards() {
         const topScorers = [...(tournamentData.topScorers || [])].sort((a, b) => (b.goals || 0) - (a.goals || 0));
         const topGoalkeepers = tournamentData.topGoalkeepers || [];
+        const yellowCardTable = tournamentData.disciplinary?.yellowCardTable || [];
+        const suspendedPlayers = tournamentData.disciplinary?.suspendedPlayers || [];
 
         const scorerRows = topScorers.map((player, idx) => `
             <tr class="border-b border-slate-100">
@@ -250,6 +253,22 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         `).join('');
 
+        const yellowRows = yellowCardTable.map((player, idx) => `
+            <tr class="border-b border-slate-100">
+                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
+                <td class="py-2 text-slate-500">${player.team}</td>
+                <td class="py-2 font-black text-amber-700 text-center">${player.yellowCards}</td>
+            </tr>
+        `).join('');
+
+        const suspendedRows = suspendedPlayers.map((player, idx) => `
+            <tr class="border-b border-slate-100 align-top">
+                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
+                <td class="py-2 text-slate-500">${player.team}</td>
+                <td class="py-2 text-red-700 font-bold">${player.suspendedMatch || '-'}</td>
+            </tr>
+        `).join('');
+
         contentAwards.innerHTML = `
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
                 <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 هدافين</h3>
@@ -263,6 +282,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 <table class="w-full text-sm">
                     <thead><tr class="text-slate-500"><th class="text-right pb-2">الحارس</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">كلين شيت</th></tr></thead>
                     <tbody>${keeperRows}</tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-black text-lg mb-3 text-slate-800">سجل الإنذارات</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">عدد الإنذارات</th></tr></thead>
+                    <tbody>${yellowRows || '<tr><td colspan="3" class="py-2 text-slate-400 text-center">لا توجد بيانات</td></tr>'}</tbody>
+                </table>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-black text-lg mb-3 text-slate-800">الموقوفون عن المباراة القادمة</h3>
+                <table class="w-full text-sm">
+                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-right pb-2">المباراة المحروم منها</th></tr></thead>
+                    <tbody>${suspendedRows || '<tr><td colspan="3" class="py-2 text-slate-400 text-center">لا يوجد موقوفون</td></tr>'}</tbody>
                 </table>
             </div>
         `;
