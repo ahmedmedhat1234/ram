@@ -2,8 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const tabDaily = document.getElementById('tab-daily');
     const tabGroups = document.getElementById('tab-groups');
+    const tabStats = document.getElementById('tab-stats');
+    const tabDisciplinary = document.getElementById('tab-disciplinary');
+    
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
+    const contentStats = document.getElementById('content-stats');
+    const contentDisciplinary = document.getElementById('content-disciplinary');
     let contentAwards = document.getElementById('content-awards');
 
     if (!contentDaily || !contentGroups || !tabDaily || !tabGroups || !searchInput) {
@@ -11,17 +16,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    if (!contentAwards) {
-        contentAwards = document.createElement('div');
-        contentAwards.id = 'content-awards';
-        contentAwards.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8';
-        contentGroups.insertAdjacentElement('afterend', contentAwards);
-    }
-
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
     document.getElementById('main-subtitle').textContent = tournamentData.subtitle;
     document.getElementById('group-count').textContent = tournamentData.groupCount || "12";
+
+    // Helper to switch tabs
+    function switchTab(activeTab, activeContent) {
+        [tabDaily, tabGroups, tabStats, tabDisciplinary].forEach(tab => {
+            if (tab) {
+                tab.classList.remove('tab-active');
+                tab.classList.add('text-slate-500');
+            }
+        });
+        [contentDaily, contentGroups, contentStats, contentDisciplinary].forEach(content => {
+            if (content) content.classList.add('hidden');
+        });
+
+        activeTab.classList.add('tab-active');
+        activeTab.classList.remove('text-slate-500');
+        activeContent.classList.remove('hidden');
+    }
 
     // Render Daily Schedule
     function renderDaily(filter = '') {
@@ -89,8 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `
                     : '';
-
-
 
                 matchRow.innerHTML = `
                     <div class="w-full">
@@ -231,112 +244,188 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderAwards() {
-        const topScorers = [...(tournamentData.topScorers || [])].sort((a, b) => (b.goals || 0) - (a.goals || 0));
-        const topGoalkeepers = tournamentData.topGoalkeepers || [];
-        const yellowCardTable = tournamentData.disciplinary?.yellowCardTable || [];
-        const suspendedPlayers = tournamentData.disciplinary?.suspendedPlayers || [];
+    function renderStats(filter = '') {
+        contentStats.innerHTML = '';
+        
+        // 1. Top Scorers
+        const topScorers = [...(tournamentData.topScorers || [])]
+            .filter(p => !filter || p.name.includes(filter) || p.team.includes(filter))
+            .sort((a, b) => (b.goals || 0) - (a.goals || 0));
+            
+        // 2. Top Goalkeepers
+        const topGoalkeepers = [...(tournamentData.topGoalkeepers || [])]
+            .filter(p => !filter || p.name.includes(filter) || p.team.includes(filter))
+            .sort((a, b) => (b.cleanSheets || 0) - (a.cleanSheets || 0));
 
-        const scorerRows = topScorers.map((player, idx) => `
-            <tr class="border-b border-slate-100">
-                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
-                <td class="py-2 text-slate-500">${player.team}</td>
-                <td class="py-2 font-black text-blue-700 text-center">${player.goals}</td>
+        // 3. Team Stats (Attack & Defense)
+        const teamStats = [];
+        (tournamentData.groups || []).forEach(group => {
+            (group.teams || []).forEach(team => {
+                teamStats.push({
+                    name: team.name,
+                    gf: team.gf || 0,
+                    ga: team.ga || 0,
+                    played: team.played || 0,
+                    avgGf: team.played > 0 ? (team.gf / team.played).toFixed(2) : 0,
+                    avgGa: team.played > 0 ? (team.ga / team.played).toFixed(2) : 0
+                });
+            });
+        });
+
+        const bestAttack = [...teamStats].sort((a, b) => b.avgGf - a.avgGf).slice(0, 5);
+        const bestDefense = [...teamStats].filter(t => t.played > 0).sort((a, b) => a.avgGa - b.avgGa).slice(0, 5);
+
+        const createTableCard = (title, icon, colorClass, headers, rows) => {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+            card.innerHTML = `
+                <div class="bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center gap-3">
+                    <i class="${icon} ${colorClass}"></i>
+                    <span>${title}</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-100">
+                            <tr>${headers.map(h => `<th class="px-4 py-3">${h}</th>`).join('')}</tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">${rows}</tbody>
+                    </table>
+                </div>
+            `;
+            return card;
+        };
+
+        // Scorers Rows
+        const scorerRows = topScorers.slice(0, 10).map((p, idx) => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-4 py-3 text-slate-600">${p.team}</td>
+                <td class="px-4 py-3 text-center font-black text-blue-600">${p.goals}</td>
             </tr>
         `).join('');
 
-        const keeperRows = topGoalkeepers.map((keeper, idx) => `
-            <tr class="border-b border-slate-100">
-                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${keeper.name}</td>
-                <td class="py-2 text-slate-500">${keeper.team}</td>
-                <td class="py-2 font-black text-emerald-700 text-center">${keeper.cleanSheets}</td>
+        // Keepers Rows
+        const keeperRows = topGoalkeepers.slice(0, 10).map((p, idx) => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-4 py-3 text-slate-600">${p.team}</td>
+                <td class="px-4 py-3 text-center font-black text-emerald-600">${p.cleanSheets}</td>
             </tr>
         `).join('');
 
-        const yellowRows = yellowCardTable.map((player, idx) => `
-            <tr class="border-b border-slate-100">
-                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
-                <td class="py-2 text-slate-500">${player.team}</td>
-                <td class="py-2 font-black text-amber-700 text-center">${player.yellowCards}</td>
+        // Attack Rows
+        const attackRows = bestAttack.map((t, idx) => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${t.name}</td>
+                <td class="px-4 py-3 text-center text-slate-600">${t.gf}</td>
+                <td class="px-4 py-3 text-center font-black text-orange-600">${t.avgGf}</td>
             </tr>
         `).join('');
 
-        const suspendedRows = suspendedPlayers.map((player, idx) => `
-            <tr class="border-b border-slate-100 align-top">
-                <td class="py-2 font-bold text-slate-700">${idx + 1}. ${player.name}</td>
-                <td class="py-2 text-slate-500">${player.team}</td>
-                <td class="py-2 text-red-700 font-bold">${player.suspendedMatch || '-'}</td>
+        // Defense Rows
+        const defenseRows = bestDefense.map((t, idx) => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${t.name}</td>
+                <td class="px-4 py-3 text-center text-slate-600">${t.ga}</td>
+                <td class="px-4 py-3 text-center font-black text-indigo-600">${t.avgGa}</td>
             </tr>
         `).join('');
 
-        contentAwards.innerHTML = `
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-                <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 هدافين</h3>
-                <table class="w-full text-sm">
-                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">الأهداف</th></tr></thead>
-                    <tbody>${scorerRows}</tbody>
-                </table>
-            </div>
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-                <h3 class="font-black text-lg mb-3 text-slate-800">أفضل 5 حراس</h3>
-                <table class="w-full text-sm">
-                    <thead><tr class="text-slate-500"><th class="text-right pb-2">الحارس</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">كلين شيت</th></tr></thead>
-                    <tbody>${keeperRows}</tbody>
-                </table>
-            </div>
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-                <h3 class="font-black text-lg mb-3 text-slate-800">سجل الإنذارات</h3>
-                <table class="w-full text-sm">
-                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-center pb-2">عدد الإنذارات</th></tr></thead>
-                    <tbody>${yellowRows || '<tr><td colspan="3" class="py-2 text-slate-400 text-center">لا توجد بيانات</td></tr>'}</tbody>
-                </table>
-            </div>
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-                <h3 class="font-black text-lg mb-3 text-slate-800">الموقوفون عن المباراة القادمة</h3>
-                <table class="w-full text-sm">
-                    <thead><tr class="text-slate-500"><th class="text-right pb-2">اللاعب</th><th class="text-right pb-2">الفريق</th><th class="text-right pb-2">المباراة المحروم منها</th></tr></thead>
-                    <tbody>${suspendedRows || '<tr><td colspan="3" class="py-2 text-slate-400 text-center">لا يوجد موقوفون</td></tr>'}</tbody>
-                </table>
-            </div>
-        `;
+        contentStats.appendChild(createTableCard('أفضل الهدافين', 'fas fa-fire', 'text-orange-500', ['اللاعب', 'الفريق', 'الأهداف'], scorerRows));
+        contentStats.appendChild(createTableCard('أفضل الحراس', 'fas fa-hands', 'text-emerald-500', ['الحارس', 'الفريق', 'كلين شيت'], keeperRows));
+        contentStats.appendChild(createTableCard('أقوى هجوم (متوسط)', 'fas fa-bolt', 'text-yellow-500', ['الفريق', 'الأهداف', 'المعدل'], attackRows));
+        contentStats.appendChild(createTableCard('أقوى دفاع (متوسط)', 'fas fa-shield-alt', 'text-indigo-500', ['الفريق', 'عليه', 'المعدل'], defenseRows));
     }
 
-    // Tab Switching
+    function renderDisciplinary(filter = '') {
+        contentDisciplinary.innerHTML = '';
+        
+        const yellowCards = [...(tournamentData.disciplinary?.yellowCardTable || [])]
+            .filter(p => !filter || p.name.includes(filter) || p.team.includes(filter))
+            .sort((a, b) => b.yellowCards - a.yellowCards);
+            
+        const suspended = [...(tournamentData.disciplinary?.suspendedPlayers || [])]
+            .filter(p => !filter || p.name.includes(filter) || p.team.includes(filter));
+
+        const createTableCard = (title, icon, colorClass, headers, rows) => {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+            card.innerHTML = `
+                <div class="bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center gap-3">
+                    <i class="${icon} ${colorClass}"></i>
+                    <span>${title}</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-100">
+                            <tr>${headers.map(h => `<th class="px-4 py-3">${h}</th>`).join('')}</tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">${rows}</tbody>
+                    </table>
+                </div>
+            `;
+            return card;
+        };
+
+        const yellowRows = yellowCards.map((p, idx) => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-4 py-3 text-slate-600">${p.team}</td>
+                <td class="px-4 py-3 text-center">
+                    <span class="inline-block w-4 h-6 bg-yellow-400 rounded-sm shadow-sm mr-2 align-middle"></span>
+                    <span class="font-black text-slate-700">${p.yellowCards}</span>
+                </td>
+            </tr>
+        `).join('');
+
+        const suspendedRows = suspended.map((p, idx) => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-4 py-3 text-slate-600">${p.team}</td>
+                <td class="px-4 py-3 text-red-600 font-bold text-xs">${p.suspendedMatch}</td>
+            </tr>
+        `).join('');
+
+        contentDisciplinary.appendChild(createTableCard('سجل الإنذارات', 'fas fa-copy', 'text-yellow-500', ['اللاعب', 'الفريق', 'الإنذارات'], yellowRows));
+        contentDisciplinary.appendChild(createTableCard('الموقوفون', 'fas fa-user-slash', 'text-red-500', ['اللاعب', 'الفريق', 'مباراة الإيقاف'], suspendedRows));
+    }
+
+    // Tab Switching Events
     tabDaily.addEventListener('click', () => {
-        tabDaily.classList.add('tab-active');
-        tabDaily.classList.remove('text-slate-500');
-        tabGroups.classList.remove('tab-active');
-        tabGroups.classList.add('text-slate-500');
-        contentDaily.classList.remove('hidden');
-        contentGroups.classList.add('hidden');
+        switchTab(tabDaily, contentDaily);
         renderDaily(searchInput.value);
     });
 
     tabGroups.addEventListener('click', () => {
-        tabGroups.classList.add('tab-active');
-        tabGroups.classList.remove('text-slate-500');
-        tabDaily.classList.remove('tab-active');
-        tabDaily.classList.add('text-slate-500');
-        contentGroups.classList.remove('hidden');
-        contentDaily.classList.add('hidden');
+        switchTab(tabGroups, contentGroups);
         renderGroups(searchInput.value);
+    });
+
+    tabStats.addEventListener('click', () => {
+        switchTab(tabStats, contentStats);
+        renderStats(searchInput.value);
+    });
+
+    tabDisciplinary.addEventListener('click', () => {
+        switchTab(tabDisciplinary, contentDisciplinary);
+        renderDisciplinary(searchInput.value);
     });
 
     // Search
     searchInput.addEventListener('input', (e) => {
         const val = (e.target.value || "").trim();
-        if (!contentDaily.classList.contains('hidden')) {
-            renderDaily(val);
-        } else {
-            renderGroups(val);
-        }
+        if (!contentDaily.classList.contains('hidden')) renderDaily(val);
+        else if (!contentGroups.classList.contains('hidden')) renderGroups(val);
+        else if (!contentStats.classList.contains('hidden')) renderStats(val);
+        else if (!contentDisciplinary.classList.contains('hidden')) renderDisciplinary(val);
     });
 
     // Initial Render
     try {
         renderDaily();
         renderGroups();
-        renderAwards();
+        renderStats();
+        renderDisciplinary();
     } catch (err) {
         console.error('Render failed:', err);
         contentDaily.innerHTML = '<div class="text-center py-12 text-red-500 bg-white rounded-2xl border border-red-200">حدث خطأ أثناء عرض البيانات.</div>';
