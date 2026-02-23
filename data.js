@@ -263,7 +263,7 @@ const tournamentData = {
       "date": "الاثنين 23/2",
       "time": "10:30",
       "group": 7,
-      "team1": "المداح",
+      "team1": "أصدقاء فتح الله",
       "team2": "اللؤلؤة",
       "score1": "",
       "score2": ""
@@ -279,7 +279,16 @@ const tournamentData = {
 		    },
     {
       "date": "الثلاثاء 24/2",
-      "time": "9:00",
+      "time": "8:30",
+      "group": 9,
+      "team1": "العمدوية",
+      "team2": "عمر جمال",
+      "score1": "",
+      "score2": ""
+    },
+    {
+      "date": "الثلاثاء 24/2",
+      "time": "9:10",
       "group": 6,
       "team1": "ميدو خليل",
       "team2": "كوم أشو",
@@ -288,10 +297,10 @@ const tournamentData = {
     },
     {
       "date": "الثلاثاء 24/2",
-      "time": "9:45",
-      "group": 9,
-      "team1": "العمدوية",
-      "team2": "عمر جمال",
+      "time": "9:50",
+      "group": 7,
+      "team1": "اللؤلؤة",
+      "team2": "أصدقاء فتح الله",
       "score1": "",
       "score2": ""
     },
@@ -371,8 +380,8 @@ const tournamentData = {
       "date": "الجمعة 27/2",
       "time": "10:30",
       "group": 2,
-      "team1": "الجزيرة",
-      "team2": "المغلاني",
+      "team1": "نجوم أبوشادي",
+      "team2": "عزبة يوسف",
       "score1": "",
       "score2": ""
     },
@@ -380,8 +389,8 @@ const tournamentData = {
       "date": "الجمعة 27/2",
       "time": "11:20",
       "group": 2,
-      "team1": "عزبة يوسف",
-      "team2": "نجوم أبوشادي",
+      "team1": "المغلاني",
+      "team2": "الجزيرة",
       "score1": "",
       "score2": ""
     },
@@ -444,7 +453,7 @@ const tournamentData = {
       "time": "10:30",
       "group": 7,
       "team1": "نجوم الورقية",
-      "team2": "المداح",
+      "team2": "أصدقاء فتح الله",
       "score1": "",
       "score2": ""
     },
@@ -660,7 +669,7 @@ const tournamentData = {
       "time": "10:30",
       "group": 7,
       "team1": "عتمان",
-      "team2": "المداح",
+      "team2": "أصدقاء فتح الله",
       "score1": "",
       "score2": ""
     },
@@ -1088,7 +1097,7 @@ const tournamentData = {
       "name": "المجموعة 7",
       "teams": [
         {
-          "name": "المداح",
+          "name": "أصدقاء فتح الله",
           "played": 0,
           "won": 0,
           "lost": 0,
