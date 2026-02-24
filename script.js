@@ -29,6 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getGoalCountFromEntry(entry = '') {
         const text = String(entry);
+        const normalizedDigits = text.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+
+        const numericMatch = normalizedDigits.match(/(\d+)\s*(?:هدف(?:ان|ين)?|أهداف|اهداف)/);
+        if (numericMatch) return parseInt(numericMatch[1], 10);
+
+        if (/سوبر\s*هاتريك/.test(normalizedDigits)) return 4;
+        if (/هاتريك/.test(normalizedDigits)) return 3;
+        if (/هدف(?:ان|ين)/.test(normalizedDigits)) return 2;
         const numericMatch = text.match(/(\d+)\s*هدف/);
         if (numericMatch) return parseInt(numericMatch[1], 10);
 
