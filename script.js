@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tab) {
                 tab.classList.remove('tab-active');
                 tab.classList.add('text-slate-500');
-                tab.classList.add('text-[10px]', 'md:text-sm'); // Smaller text for mobile
+                tab.classList.remove('text-sm', 'md:text-base');
+                tab.classList.add('text-[10px]', 'md:text-sm');
             }
         });
         [contentDaily, contentGroups, contentStats, contentDisciplinary, contentRules].forEach(content => {
@@ -43,11 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal Logic
     function openTeamModal(teamName) {
-        const team = tournamentData.teams[teamName];
+        const team = (tournamentData.teams || {})[teamName];
         if (!team) return;
 
         modalTeamName.textContent = teamName;
-        modalTeamCoach.textContent = `المدير الفني: ${team.coach}`;
+        modalTeamCoach.textContent = `المدير الفني: ${team.coach || 'غير محدد'}`;
         
         const playerStats = {};
         (tournamentData.matches || []).forEach(match => {
@@ -55,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const isTeam2 = match.team2 === teamName;
             if (!isTeam1 && !isTeam2) return;
 
-            const scorers = isTeam1 ? (match.team1Scorers || []) : (match.team2Scorers || []);
-            const yellows = isTeam1 ? (match.team1YellowCards || []) : (match.team2YellowCards || []);
+            const scorers = isTeam1 ? (match.team1Scorers || match.scorers || []) : (match.team2Scorers || []);
+            const yellows = isTeam1 ? (match.team1YellowCards || match.yellowCards || []) : (match.team2YellowCards || []);
             const reds = isTeam1 ? (match.team1RedCards || []) : (match.team2RedCards || []);
 
             scorers.forEach(s => {
@@ -65,27 +66,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 playerStats[name].goals += 1;
             });
             yellows.forEach(s => {
-                playerStats[s] = playerStats[s] || { goals: 0, yellows: 0, reds: 0 };
-                playerStats[s].yellows += 1;
+                const name = s.split('(')[0].trim();
+                playerStats[name] = playerStats[name] || { goals: 0, yellows: 0, reds: 0 };
+                playerStats[name].yellows += 1;
             });
             reds.forEach(s => {
-                playerStats[s] = playerStats[s] || { goals: 0, yellows: 0, reds: 0 };
-                playerStats[s].reds += 1;
+                const name = s.split('(')[0].trim();
+                playerStats[name] = playerStats[name] || { goals: 0, yellows: 0, reds: 0 };
+                playerStats[name].reds += 1;
             });
         });
 
-        const playerCount = team.players.length;
+        const playerCount = (team.players || []).length;
         let html = `
             <div class="mb-4">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest">حارس المرمى</h3>
-                </div>
+                <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest mb-2">حارس المرمى</h3>
                 <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-sm">
                             <i class="fas fa-hands text-xs"></i>
                         </div>
-                        <span class="font-bold text-emerald-900 text-sm">${team.goalkeeper}</span>
+                        <span class="font-bold text-emerald-900 text-sm">${team.goalkeeper || 'غير محدد'}</span>
                     </div>
                     <span class="text-[9px] bg-emerald-200 text-emerald-700 px-2 py-0.5 rounded font-bold">GK</span>
                 </div>
@@ -100,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="grid grid-cols-1 gap-1.5">
         `;
 
-        team.players.forEach(player => {
+        (team.players || []).forEach(player => {
             const stats = playerStats[player] || { goals: 0, yellows: 0, reds: 0 };
             html += `
                 <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between hover:bg-white hover:shadow-sm transition-all group">
@@ -207,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="flex flex-col items-center gap-0.5 flex-shrink-0">
                                 <span class="font-black text-blue-700 text-[10px]">${match.time}</span>
                                 <span class="text-[8px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-bold">G${match.group}</span>
+                                ${match.status ? `<span class="text-[8px] bg-amber-500 text-white px-1.5 py-0.5 rounded font-bold">${match.status}</span>` : ''}
                             </div>
                             
                             <div class="flex items-center gap-1.5 flex-1 justify-end min-w-0">
@@ -268,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderStats(filter = '') {
         contentStats.innerHTML = '';
         
-        // Calculate dynamic stats
         const scorers = {};
         const cleanSheets = {};
         const teamStats = {};
@@ -279,17 +280,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPlayed = !isNaN(s1) && !isNaN(s2);
 
             if (isPlayed) {
-                // Scorers
-                [... (match.team1Scorers || []), ... (match.team2Scorers || [])].forEach(s => {
+                [... (match.team1Scorers || match.scorers || []), ... (match.team2Scorers || [])].forEach(s => {
                     const name = s.split('(')[0].trim();
                     scorers[name] = (scorers[name] || 0) + 1;
                 });
 
-                // Clean Sheets
                 if (s2 === 0) cleanSheets[match.team1] = (cleanSheets[match.team1] || 0) + 1;
                 if (s1 === 0) cleanSheets[match.team2] = (cleanSheets[match.team2] || 0) + 1;
 
-                // Team Stats
                 teamStats[match.team1] = teamStats[match.team1] || { gf: 0, ga: 0, p: 0 };
                 teamStats[match.team2] = teamStats[match.team2] || { gf: 0, ga: 0, p: 0 };
                 teamStats[match.team1].gf += s1; teamStats[match.team1].ga += s2; teamStats[match.team1].p += 1;
@@ -298,12 +296,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const topScorers = Object.entries(scorers).map(([name, goals]) => {
-            const team = Object.keys(tournamentData.teams).find(t => tournamentData.teams[t].players.includes(name)) || "غير معروف";
+            const team = Object.keys(tournamentData.teams || {}).find(t => (tournamentData.teams[t].players || []).includes(name)) || "غير معروف";
             return { name, goals, team };
         }).sort((a, b) => b.goals - a.goals).slice(0, 10);
 
         const topKeepers = Object.entries(cleanSheets).map(([teamName, count]) => {
-            const keeper = tournamentData.teams[teamName]?.goalkeeper || "غير معروف";
+            const keeper = (tournamentData.teams || {})[teamName]?.goalkeeper || "غير معروف";
             return { name: keeper, team: teamName, cleanSheets: count };
         }).sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 10);
 
@@ -374,7 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const suspended = [];
 
         (tournamentData.matches || []).forEach(match => {
-            [... (match.team1YellowCards || []), ... (match.team2YellowCards || [])].forEach(name => {
+            [... (match.team1YellowCards || match.yellowCards || []), ... (match.team2YellowCards || [])].forEach(s => {
+                const name = s.split('(')[0].trim();
                 yellows[name] = (yellows[name] || 0) + 1;
             });
             [... (match.team1RedCards || []), ... (match.team2RedCards || [])].forEach(r => {
@@ -385,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const yellowRows = Object.entries(yellows).sort((a, b) => b[1] - a[1]).map(([name, count], idx) => {
-            const team = Object.keys(tournamentData.teams).find(t => tournamentData.teams[t].players.includes(name)) || "غير معروف";
+            const team = Object.keys(tournamentData.teams || {}).find(t => (tournamentData.teams[t].players || []).includes(name)) || "غير معروف";
             return `
                 <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${team}')">
                     <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${name}</td>
