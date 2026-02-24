@@ -37,8 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (/سوبر\s*هاتريك/.test(normalizedDigits)) return 4;
         if (/هاتريك/.test(normalizedDigits)) return 3;
         if (/هدف(?:ان|ين)/.test(normalizedDigits)) return 2;
-        const numericMatch = text.match(/(\d+)\s*هدف/);
-        if (numericMatch) return parseInt(numericMatch[1], 10);
+        const numericMatch2 = text.match(/(\d+)\s*هدف/);
+        if (numericMatch2) return parseInt(numericMatch2[1], 10);
 
         if (/سوبر\s*هاتريك/.test(text)) return 4;
         if (/هاتريك/.test(text)) return 3;
