@@ -359,7 +359,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
                         <thead class="bg-slate-50/50 text-slate-500 text-[9px] uppercase font-bold border-b border-slate-100">
-                            <tr><th class="px-3 py-2">الفريق</th><th class="px-2 py-2 text-center">ل</th><th class="px-2 py-2 text-center">+/-</th><th class="px-3 py-2 text-center text-blue-600">ن</th></tr>
+                            <tr>
+                                <th class="px-2 py-2">الفريق</th>
+                                <th class="px-1.5 py-2 text-center">ل</th>
+                                <th class="px-1.5 py-2 text-center">ف</th>
+                                <th class="px-1.5 py-2 text-center">ت</th>
+                                <th class="px-1.5 py-2 text-center">خ</th>
+                                <th class="px-1.5 py-2 text-center">له</th>
+                                <th class="px-1.5 py-2 text-center">عليه</th>
+                                <th class="px-1.5 py-2 text-center">+/-</th>
+                                <th class="px-2 py-2 text-center text-blue-600">ن</th>
+                            </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
             `;
@@ -367,10 +377,15 @@ document.addEventListener('DOMContentLoaded', () => {
             teams.forEach((team, idx) => {
                 tableHTML += `
                     <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="window.openTeamModal('${team.name}')">
-                        <td class="px-3 py-3 font-bold text-slate-800">${idx + 1}. ${team.name}</td>
-                        <td class="px-2 py-3 text-center text-slate-600">${team.played}</td>
-                        <td class="px-2 py-3 text-center text-slate-600 font-bold">${team.gd}</td>
-                        <td class="px-3 py-3 text-center font-black text-blue-700 bg-blue-50/30">${team.points}</td>
+                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name}</td>
+                        <td class="px-1.5 py-2.5 text-center text-slate-600 font-medium">${team.played}</td>
+                        <td class="px-1.5 py-2.5 text-center text-emerald-600 font-bold">${team.won}</td>
+                        <td class="px-1.5 py-2.5 text-center text-blue-600 font-bold">${team.draw}</td>
+                        <td class="px-1.5 py-2.5 text-center text-red-600 font-bold">${team.lost}</td>
+                        <td class="px-1.5 py-2.5 text-center text-slate-700 font-medium">${team.gf}</td>
+                        <td class="px-1.5 py-2.5 text-center text-slate-700 font-medium">${team.ga}</td>
+                        <td class="px-1.5 py-2.5 text-center text-slate-600 font-bold">${team.gd > 0 ? '+' : ''}${team.gd}</td>
+                        <td class="px-2 py-2.5 text-center font-black text-blue-700 bg-blue-50/30">${team.points}</td>
                     </tr>
                 `;
             });
