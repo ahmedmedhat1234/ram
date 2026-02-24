@@ -18,11 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTeamCoach = document.getElementById('modal-team-coach');
     const modalContent = document.getElementById('modal-content');
 
-    if (!contentDaily || !contentGroups || !tabDaily || !tabGroups || !searchInput) {
-        console.error('Required UI elements are missing.');
-        return;
-    }
-
     // Initialize UI
     document.getElementById('main-title').textContent = tournamentData.title;
     document.getElementById('main-subtitle').textContent = tournamentData.subtitle;
@@ -34,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tab) {
                 tab.classList.remove('tab-active');
                 tab.classList.add('text-slate-500');
+                tab.classList.add('text-[10px]', 'md:text-sm'); // Smaller text for mobile
             }
         });
         [contentDaily, contentGroups, contentStats, contentDisciplinary, contentRules].forEach(content => {
@@ -53,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTeamName.textContent = teamName;
         modalTeamCoach.textContent = `المدير الفني: ${team.coach}`;
         
-        // Calculate player stats from matches
         const playerStats = {};
         (tournamentData.matches || []).forEach(match => {
             const isTeam1 = match.team1 === teamName;
@@ -79,33 +74,41 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        const playerCount = team.players.length;
         let html = `
-            <div class="mb-6">
-                <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest mb-3">حارس المرمى</h3>
-                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center justify-between">
+            <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest">حارس المرمى</h3>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg">
-                            <i class="fas fa-hands"></i>
+                        <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-sm">
+                            <i class="fas fa-hands text-xs"></i>
                         </div>
-                        <span class="font-bold text-emerald-900">${team.goalkeeper}</span>
+                        <span class="font-bold text-emerald-900 text-sm">${team.goalkeeper}</span>
                     </div>
-                    <span class="text-[10px] bg-emerald-200 text-emerald-700 px-2 py-1 rounded-lg font-bold">GK</span>
+                    <span class="text-[9px] bg-emerald-200 text-emerald-700 px-2 py-0.5 rounded font-bold">GK</span>
                 </div>
             </div>
             <div>
-                <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest mb-3">قائمة اللاعبين</h3>
-                <div class="grid grid-cols-1 gap-2">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest">قائمة اللاعبين</h3>
+                    <span class="text-[10px] font-bold ${playerCount > 12 ? 'text-red-500' : 'text-blue-600'} bg-blue-50 px-2 py-0.5 rounded-full">
+                        ${playerCount} / 12 لاعب
+                    </span>
+                </div>
+                <div class="grid grid-cols-1 gap-1.5">
         `;
 
         team.players.forEach(player => {
             const stats = playerStats[player] || { goals: 0, yellows: 0, reds: 0 };
             html += `
-                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-between hover:bg-white hover:shadow-md transition-all group">
-                    <span class="font-bold text-slate-700 group-hover:text-blue-600 transition-colors">${player}</span>
-                    <div class="flex items-center gap-2">
-                        ${stats.goals > 0 ? `<span class="flex items-center gap-1 text-blue-600 font-black text-xs bg-blue-50 px-2 py-1 rounded-lg"><i class="fas fa-futbol text-[10px]"></i> ${stats.goals}</span>` : ''}
-                        ${stats.yellows > 0 ? `<span class="w-3 h-4 bg-yellow-400 rounded-sm shadow-sm" title="إنذار"></span>` : ''}
-                        ${stats.reds > 0 ? `<span class="w-3 h-4 bg-red-500 rounded-sm shadow-sm" title="طرد"></span>` : ''}
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between hover:bg-white hover:shadow-sm transition-all group">
+                    <span class="font-bold text-slate-700 text-sm group-hover:text-blue-600 transition-colors">${player}</span>
+                    <div class="flex items-center gap-1.5">
+                        ${stats.goals > 0 ? `<span class="flex items-center gap-1 text-blue-600 font-black text-[10px] bg-blue-50 px-1.5 py-0.5 rounded"><i class="fas fa-futbol text-[8px]"></i> ${stats.goals}</span>` : ''}
+                        ${stats.yellows > 0 ? `<span class="w-2.5 h-3.5 bg-yellow-400 rounded-sm shadow-sm" title="إنذار"></span>` : ''}
+                        ${stats.reds > 0 ? `<span class="w-2.5 h-3.5 bg-red-500 rounded-sm shadow-sm" title="طرد"></span>` : ''}
                     </div>
                 </div>
             `;
@@ -150,19 +153,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.keys(groupedByDate).forEach(date => {
             const dateSection = document.createElement('div');
-            dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8';
+            dateSection.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6';
 
             const dateHeader = document.createElement('div');
-            dateHeader.className = 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-6 py-3 font-bold text-base flex items-center gap-3';
+            dateHeader.className = 'bg-gradient-to-r from-blue-700 to-indigo-800 text-white px-4 py-2.5 font-bold text-sm flex items-center gap-3';
             dateHeader.innerHTML = `<i class="far fa-calendar-check"></i> ${date}`;
             dateSection.appendChild(dateHeader);
 
             const matchesList = document.createElement('div');
-            matchesList.className = 'divide-y-2 divide-slate-100';
+            matchesList.className = 'divide-y divide-slate-100';
 
             groupedByDate[date].forEach(match => {
                 const matchRow = document.createElement('div');
-                matchRow.className = 'px-4 py-3 hover:bg-slate-50 transition-colors text-sm';
+                matchRow.className = 'px-3 py-3 hover:bg-slate-50 transition-colors text-xs';
 
                 const scoreState = getScoreState(match.score1, match.score2);
                 const team1Scorers = [...new Set(match.team1Scorers || [])];
@@ -176,18 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const teamDetailsHTML = hasTeamDetails
                     ? `
-                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-1.5 text-[10px]">
                             <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
                                 <div class="font-bold text-slate-700 mb-1 cursor-pointer hover:text-blue-600" onclick="window.openTeamModal('${match.team1}')">${match.team1}</div>
-                                ${team1Scorers.length ? `<div class="text-slate-600"><span class="font-bold">الهدافون:</span> ${team1Scorers.join('، ')}</div>` : '<div class="text-slate-400">لا يوجد مسجلون</div>'}
-                                ${team1YellowCards.length ? `<div class="text-amber-700 mt-1"><span class="font-bold">إنذارات:</span> ${team1YellowCards.join('، ')}</div>` : ''}
-                                ${team1RedCards.length ? `<div class="text-red-700 mt-1"><span class="font-bold">طرد:</span> ${team1RedCards.join('، ')}</div>` : ''}
+                                ${team1Scorers.length ? `<div class="text-slate-600"><span class="font-bold">الهدافون:</span> ${team1Scorers.join('، ')}</div>` : ''}
+                                ${team1YellowCards.length ? `<div class="text-amber-700 mt-0.5"><span class="font-bold">إنذارات:</span> ${team1YellowCards.join('، ')}</div>` : ''}
+                                ${team1RedCards.length ? `<div class="text-red-700 mt-0.5"><span class="font-bold">طرد:</span> ${team1RedCards.join('، ')}</div>` : ''}
                             </div>
                             <div class="bg-slate-50 rounded-lg p-2 border border-slate-100">
                                 <div class="font-bold text-slate-700 mb-1 cursor-pointer hover:text-blue-600" onclick="window.openTeamModal('${match.team2}')">${match.team2}</div>
-                                ${team2Scorers.length ? `<div class="text-slate-600"><span class="font-bold">الهدافون:</span> ${team2Scorers.join('، ')}</div>` : '<div class="text-slate-400">لا يوجد مسجلون</div>'}
-                                ${team2YellowCards.length ? `<div class="text-amber-700 mt-1"><span class="font-bold">إنذارات:</span> ${team2YellowCards.join('، ')}</div>` : ''}
-                                ${team2RedCards.length ? `<div class="text-red-700 mt-1"><span class="font-bold">طرد:</span> ${team2RedCards.join('، ')}</div>` : ''}
+                                ${team2Scorers.length ? `<div class="text-slate-600"><span class="font-bold">الهدافون:</span> ${team2Scorers.join('، ')}</div>` : ''}
+                                ${team2YellowCards.length ? `<div class="text-amber-700 mt-0.5"><span class="font-bold">إنذارات:</span> ${team2YellowCards.join('، ')}</div>` : ''}
+                                ${team2RedCards.length ? `<div class="text-red-700 mt-0.5"><span class="font-bold">طرد:</span> ${team2RedCards.join('، ')}</div>` : ''}
                             </div>
                         </div>
                     `
@@ -195,21 +198,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 matchRow.innerHTML = `
                     <div class="w-full">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-2 flex-1 min-w-0">
-                                <span class="font-semibold text-slate-800 truncate cursor-pointer hover:text-blue-600" onclick="window.openTeamModal('${match.team1}')">${match.team1}</span>
-                                <span class="w-8 h-8 flex items-center justify-center rounded-lg font-bold text-xs flex-shrink-0 ${scoreState.team1}">${match.score1 || '-'}</span>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                <span class="font-bold text-slate-800 truncate cursor-pointer hover:text-blue-600" onclick="window.openTeamModal('${match.team1}')">${match.team1}</span>
+                                <span class="w-7 h-7 flex items-center justify-center rounded-lg font-black text-[10px] flex-shrink-0 ${scoreState.team1}">${match.score1 || '-'}</span>
                             </div>
                             
-                            <div class="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg border border-blue-100 flex-shrink-0">
-                                <span class="font-bold text-blue-700 text-xs">${match.time}</span>
-                                <span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded font-bold">G${match.group}</span>
-                                ${match.status ? `<span class="text-[9px] bg-amber-500 text-white px-2 py-0.5 rounded font-bold">${match.status}</span>` : ''}
+                            <div class="flex flex-col items-center gap-0.5 flex-shrink-0">
+                                <span class="font-black text-blue-700 text-[10px]">${match.time}</span>
+                                <span class="text-[8px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-bold">G${match.group}</span>
                             </div>
                             
-                            <div class="flex items-center gap-2 flex-1 justify-end min-w-0">
-                                <span class="w-8 h-8 flex items-center justify-center rounded-lg font-bold text-xs flex-shrink-0 ${scoreState.team2}">${match.score2 || '-'}</span>
-                                <span class="font-semibold text-slate-800 truncate text-right cursor-pointer hover:text-blue-600" onclick="window.openTeamModal('${match.team2}')">${match.team2}</span>
+                            <div class="flex items-center gap-1.5 flex-1 justify-end min-w-0">
+                                <span class="w-7 h-7 flex items-center justify-center rounded-lg font-black text-[10px] flex-shrink-0 ${scoreState.team2}">${match.score2 || '-'}</span>
+                                <span class="font-bold text-slate-800 truncate text-right cursor-pointer hover:text-blue-600" onclick="window.openTeamModal('${match.team2}')">${match.team2}</span>
                             </div>
                         </div>
                         ${teamDetailsHTML}
@@ -232,16 +234,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (filter && !hasTeamMatch) return;
 
             const groupCard = document.createElement('div');
-            groupCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col';
+            groupCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col mb-4';
             
             let tableHTML = `
-                <div class="bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center justify-between">
-                    <span>${group.name}</span> <i class="fas fa-trophy text-amber-500"></i>
+                <div class="bg-slate-50 border-b border-slate-100 px-4 py-3 font-bold text-slate-800 flex items-center justify-between text-sm">
+                    <span>${group.name}</span> <i class="fas fa-trophy text-amber-500 text-xs"></i>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-right text-sm">
-                        <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-100">
-                            <tr><th class="px-4 py-3">الفريق</th><th class="px-2 py-3 text-center">ل</th><th class="px-2 py-3 text-center">+/-</th><th class="px-4 py-3 text-center text-blue-600">ن</th></tr>
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50/50 text-slate-500 text-[9px] uppercase font-bold border-b border-slate-100">
+                            <tr><th class="px-3 py-2">الفريق</th><th class="px-2 py-2 text-center">ل</th><th class="px-2 py-2 text-center">+/-</th><th class="px-3 py-2 text-center text-blue-600">ن</th></tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
             `;
@@ -249,10 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
             teams.forEach((team, idx) => {
                 tableHTML += `
                     <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="window.openTeamModal('${team.name}')">
-                        <td class="px-4 py-4 font-bold text-slate-800">${idx + 1}. ${team.name}</td>
-                        <td class="px-2 py-4 text-center text-slate-600">${team.played}</td>
-                        <td class="px-2 py-4 text-center text-slate-600 font-bold">${team.gd}</td>
-                        <td class="px-4 py-4 text-center font-black text-blue-700 bg-blue-50/30">${team.points}</td>
+                        <td class="px-3 py-3 font-bold text-slate-800">${idx + 1}. ${team.name}</td>
+                        <td class="px-2 py-3 text-center text-slate-600">${team.played}</td>
+                        <td class="px-2 py-3 text-center text-slate-600 font-bold">${team.gd}</td>
+                        <td class="px-3 py-3 text-center font-black text-blue-700 bg-blue-50/30">${team.points}</td>
                     </tr>
                 `;
             });
@@ -265,17 +267,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderStats(filter = '') {
         contentStats.innerHTML = '';
+        
+        // Calculate dynamic stats
+        const scorers = {};
+        const cleanSheets = {};
+        const teamStats = {};
+
+        (tournamentData.matches || []).forEach(match => {
+            const s1 = parseInt(match.score1);
+            const s2 = parseInt(match.score2);
+            const isPlayed = !isNaN(s1) && !isNaN(s2);
+
+            if (isPlayed) {
+                // Scorers
+                [... (match.team1Scorers || []), ... (match.team2Scorers || [])].forEach(s => {
+                    const name = s.split('(')[0].trim();
+                    scorers[name] = (scorers[name] || 0) + 1;
+                });
+
+                // Clean Sheets
+                if (s2 === 0) cleanSheets[match.team1] = (cleanSheets[match.team1] || 0) + 1;
+                if (s1 === 0) cleanSheets[match.team2] = (cleanSheets[match.team2] || 0) + 1;
+
+                // Team Stats
+                teamStats[match.team1] = teamStats[match.team1] || { gf: 0, ga: 0, p: 0 };
+                teamStats[match.team2] = teamStats[match.team2] || { gf: 0, ga: 0, p: 0 };
+                teamStats[match.team1].gf += s1; teamStats[match.team1].ga += s2; teamStats[match.team1].p += 1;
+                teamStats[match.team2].gf += s2; teamStats[match.team2].ga += s1; teamStats[match.team2].p += 1;
+            }
+        });
+
+        const topScorers = Object.entries(scorers).map(([name, goals]) => {
+            const team = Object.keys(tournamentData.teams).find(t => tournamentData.teams[t].players.includes(name)) || "غير معروف";
+            return { name, goals, team };
+        }).sort((a, b) => b.goals - a.goals).slice(0, 10);
+
+        const topKeepers = Object.entries(cleanSheets).map(([teamName, count]) => {
+            const keeper = tournamentData.teams[teamName]?.goalkeeper || "غير معروف";
+            return { name: keeper, team: teamName, cleanSheets: count };
+        }).sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 10);
+
+        const bestAttack = Object.entries(teamStats).map(([name, s]) => ({ name, avg: (s.gf / s.p).toFixed(2), total: s.gf }))
+            .sort((a, b) => b.avg - a.avg).slice(0, 5);
+        
+        const bestDefense = Object.entries(teamStats).map(([name, s]) => ({ name, avg: (s.ga / s.p).toFixed(2), total: s.ga }))
+            .sort((a, b) => a.avg - b.avg).slice(0, 5);
+
         const createTableCard = (title, icon, colorClass, headers, rows) => {
             const card = document.createElement('div');
-            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-4';
             card.innerHTML = `
-                <div class="bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center gap-3">
+                <div class="bg-slate-50 border-b border-slate-100 px-4 py-3 font-bold text-slate-800 flex items-center gap-3 text-sm">
                     <i class="${icon} ${colorClass}"></i> <span>${title}</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-right text-sm">
-                        <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-100">
-                            <tr>${headers.map(h => `<th class="px-4 py-3">${h}</th>`).join('')}</tr>
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50/50 text-slate-500 text-[9px] uppercase font-bold border-b border-slate-100">
+                            <tr>${headers.map(h => `<th class="px-3 py-2">${h}</th>`).join('')}</tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">${rows}</tbody>
                     </table>
@@ -284,80 +332,113 @@ document.addEventListener('DOMContentLoaded', () => {
             return card;
         };
 
-        const scorerRows = (tournamentData.topScorers || []).slice(0, 10).map((p, idx) => `
+        const scorerRows = topScorers.map((p, idx) => `
             <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${p.team}')">
-                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
-                <td class="px-4 py-3 text-slate-600">${p.team}</td>
-                <td class="px-4 py-3 text-center font-black text-blue-600">${p.goals}</td>
+                <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-3 py-2.5 text-slate-600">${p.team}</td>
+                <td class="px-3 py-2.5 text-center font-black text-blue-600">${p.goals}</td>
             </tr>
         `).join('');
 
-        const keeperRows = (tournamentData.topGoalkeepers || []).slice(0, 10).map((p, idx) => `
+        const keeperRows = topKeepers.map((p, idx) => `
             <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${p.team}')">
-                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
-                <td class="px-4 py-3 text-slate-600">${p.team}</td>
-                <td class="px-4 py-3 text-center font-black text-emerald-600">${p.cleanSheets}</td>
+                <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-3 py-2.5 text-slate-600">${p.team}</td>
+                <td class="px-3 py-2.5 text-center font-black text-emerald-600">${p.cleanSheets}</td>
             </tr>
         `).join('');
 
-        contentStats.appendChild(createTableCard('أفضل الهدافين', 'fas fa-fire', 'text-orange-500', ['اللاعب', 'الفريق', 'الأهداف'], scorerRows));
-        contentStats.appendChild(createTableCard('أفضل الحراس', 'fas fa-hands', 'text-emerald-500', ['الحارس', 'الفريق', 'كلين شيت'], keeperRows));
+        const attackRows = bestAttack.map((t, idx) => `
+            <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${t.name}')">
+                <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${t.name}</td>
+                <td class="px-3 py-2.5 text-center font-black text-orange-600">${t.avg}</td>
+            </tr>
+        `).join('');
+
+        const defenseRows = bestDefense.map((t, idx) => `
+            <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${t.name}')">
+                <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${t.name}</td>
+                <td class="px-3 py-2.5 text-center font-black text-indigo-600">${t.avg}</td>
+            </tr>
+        `).join('');
+
+        contentStats.appendChild(createTableCard('أفضل الهدافين', 'fas fa-fire', 'text-orange-500', ['اللاعب', 'الفريق', '⚽'], scorerRows));
+        contentStats.appendChild(createTableCard('أفضل الحراس', 'fas fa-hands', 'text-emerald-500', ['الحارس', 'الفريق', '🧤'], keeperRows));
+        contentStats.appendChild(createTableCard('أقوى هجوم (معدل)', 'fas fa-bolt', 'text-yellow-500', ['الفريق', 'المعدل'], attackRows));
+        contentStats.appendChild(createTableCard('أقوى دفاع (معدل)', 'fas fa-shield-alt', 'text-indigo-500', ['الفريق', 'المعدل'], defenseRows));
     }
 
     function renderDisciplinary(filter = '') {
         contentDisciplinary.innerHTML = '';
-        const yellowRows = (tournamentData.disciplinary?.yellowCardTable || []).map((p, idx) => `
-            <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${p.team}')">
-                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
-                <td class="px-4 py-3 text-slate-600">${p.team}</td>
-                <td class="px-4 py-3 text-center"><span class="inline-block w-3 h-4 bg-yellow-400 rounded-sm shadow-sm mr-2"></span> ${p.yellowCards}</td>
-            </tr>
-        `).join('');
+        const yellows = {};
+        const suspended = [];
 
-        const suspendedRows = (tournamentData.disciplinary?.suspendedPlayers || []).map((p, idx) => `
+        (tournamentData.matches || []).forEach(match => {
+            [... (match.team1YellowCards || []), ... (match.team2YellowCards || [])].forEach(name => {
+                yellows[name] = (yellows[name] || 0) + 1;
+            });
+            [... (match.team1RedCards || []), ... (match.team2RedCards || [])].forEach(r => {
+                const name = r.split('(')[0].trim();
+                const team = (match.team1RedCards || []).includes(r) ? match.team1 : match.team2;
+                suspended.push({ name, team, match: "المباراة القادمة" });
+            });
+        });
+
+        const yellowRows = Object.entries(yellows).sort((a, b) => b[1] - a[1]).map(([name, count], idx) => {
+            const team = Object.keys(tournamentData.teams).find(t => tournamentData.teams[t].players.includes(name)) || "غير معروف";
+            return `
+                <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${team}')">
+                    <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${name}</td>
+                    <td class="px-3 py-2.5 text-slate-600">${team}</td>
+                    <td class="px-3 py-2.5 text-center"><span class="inline-block w-2.5 h-3.5 bg-yellow-400 rounded-sm shadow-sm"></span> ${count}</td>
+                </tr>
+            `;
+        }).join('');
+
+        const suspendedRows = suspended.map((p, idx) => `
             <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${p.team}')">
-                <td class="px-4 py-3 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
-                <td class="px-4 py-3 text-slate-600">${p.team}</td>
-                <td class="px-4 py-3 text-red-600 font-bold text-xs">${p.suspendedMatch}</td>
+                <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
+                <td class="px-3 py-2.5 text-slate-600">${p.team}</td>
+                <td class="px-3 py-2.5 text-red-600 font-bold text-[10px]">${p.match}</td>
             </tr>
         `).join('');
 
         const createTableCard = (title, icon, colorClass, headers, rows) => {
             const card = document.createElement('div');
-            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-4';
             card.innerHTML = `
-                <div class="bg-slate-50 border-b border-slate-100 px-5 py-4 font-bold text-slate-800 flex items-center gap-3">
+                <div class="bg-slate-50 border-b border-slate-100 px-4 py-3 font-bold text-slate-800 flex items-center gap-3 text-sm">
                     <i class="${icon} ${colorClass}"></i> <span>${title}</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-right text-sm">
-                        <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-100">
-                            <tr>${headers.map(h => `<th class="px-4 py-3">${h}</th>`).join('')}</tr>
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50/50 text-slate-500 text-[9px] uppercase font-bold border-b border-slate-100">
+                            <tr>${headers.map(h => `<th class="px-3 py-2">${h}</th>`).join('')}</tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">${rows}</tbody>
+                        <tbody class="divide-y divide-slate-100">${rows || '<tr><td colspan="3" class="py-4 text-center text-slate-400">لا توجد بيانات</td></tr>'}</tbody>
                     </table>
                 </div>
             `;
             return card;
         };
 
-        contentDisciplinary.appendChild(createTableCard('سجل الإنذارات', 'fas fa-copy', 'text-yellow-500', ['اللاعب', 'الفريق', 'الإنذارات'], yellowRows));
-        contentDisciplinary.appendChild(createTableCard('الموقوفون', 'fas fa-user-slash', 'text-red-500', ['اللاعب', 'الفريق', 'مباراة الإيقاف'], suspendedRows));
+        contentDisciplinary.appendChild(createTableCard('سجل الإنذارات', 'fas fa-copy', 'text-yellow-500', ['اللاعب', 'الفريق', '🟨'], yellowRows));
+        contentDisciplinary.appendChild(createTableCard('الموقوفون', 'fas fa-user-slash', 'text-red-500', ['اللاعب', 'الفريق', 'الحالة'], suspendedRows));
     }
 
     function renderRules() {
         contentRules.innerHTML = '';
         (tournamentData.rules || []).forEach(rule => {
             const card = document.createElement('div');
-            card.className = 'bg-white rounded-2xl p-5 shadow-sm border border-slate-200 hover:shadow-md transition-all';
+            card.className = 'bg-white rounded-xl p-4 shadow-sm border border-slate-200 mb-3';
             card.innerHTML = `
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-7 h-7 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-xs">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <h3 class="font-black text-slate-800">${rule.title}</h3>
+                    <h3 class="font-black text-slate-800 text-sm">${rule.title}</h3>
                 </div>
-                <p class="text-slate-600 text-sm leading-relaxed font-medium">${rule.content}</p>
+                <p class="text-slate-600 text-xs leading-relaxed font-medium">${rule.content}</p>
             `;
             contentRules.appendChild(card);
         });
@@ -379,7 +460,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (!contentDisciplinary.classList.contains('hidden')) renderDisciplinary(val);
     });
 
-    // Expose Modal function to window for onclick events
     window.openTeamModal = openTeamModal;
 
     // Initial Render
