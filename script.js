@@ -123,6 +123,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return result;
     }
 
+    function getNextScheduledMatchForTeam(teamName, fromMatchIndex) {
+        const matches = tournamentData.matches || [];
+        for (let i = fromMatchIndex + 1; i < matches.length; i += 1) {
+            const nextMatch = matches[i];
+            const involvesTeam = nextMatch.team1 === teamName || nextMatch.team2 === teamName;
+            if (!involvesTeam) continue;
+
+            const opponent = nextMatch.team1 === teamName ? nextMatch.team2 : nextMatch.team1;
+            return `${nextMatch.date} - ${nextMatch.time} ضد ${opponent}`;
+        }
+        return 'لا توجد مباراة مجدولة';
+    }
+
     // Helper to switch tabs
     function switchTab(activeTab, activeContent) {
         [tabDaily, tabGroups, tabStats, tabDisciplinary, tabRules].forEach(tab => {
@@ -406,10 +419,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return { name: keeper, team: teamName, cleanSheets: count };
         }).sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 10);
 
-        const bestAttack = Object.entries(teamStats).map(([name, s]) => ({ name, avg: (s.gf / s.p).toFixed(2), total: s.gf }))
+        const bestAttack = Object.entries(teamStats).map(([name, s]) => ({ name, avg: (s.gf / s.p).toFixed(2) }))
             .sort((a, b) => b.avg - a.avg).slice(0, 5);
         
-        const bestDefense = Object.entries(teamStats).map(([name, s]) => ({ name, avg: (s.ga / s.p).toFixed(2), total: s.ga }))
+        const bestDefense = Object.entries(teamStats).map(([name, s]) => ({ name, avg: (s.ga / s.p).toFixed(2) }))
             .sort((a, b) => a.avg - b.avg).slice(0, 5);
 
         const createTableCard = (title, icon, colorClass, headers, rows) => {
@@ -472,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const yellows = {};
         const suspended = [];
 
-        (tournamentData.matches || []).forEach(match => {
+        (tournamentData.matches || []).forEach((match, matchIndex) => {
             [... (match.team1YellowCards || match.yellowCards || []), ... (match.team2YellowCards || [])].forEach(s => {
                 const name = normalizePlayerName(s);
                 yellows[name] = (yellows[name] || 0) + 1;
@@ -480,7 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
             [... (match.team1RedCards || []), ... (match.team2RedCards || [])].forEach(r => {
                 const name = normalizePlayerName(r);
                 const team = (match.team1RedCards || []).includes(r) ? match.team1 : match.team2;
-                suspended.push({ name, team, match: "المباراة القادمة" });
+                const nextMatchText = getNextScheduledMatchForTeam(team, matchIndex);
+                suspended.push({ name, team, match: nextMatchText });
             });
         });
 
