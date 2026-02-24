@@ -92,6 +92,10 @@
                         <i class="fas fa-id-card"></i>
                         سجل الانضباط
                     </button>
+                    <button id="tab-rules" class="flex-1 py-3 rounded-xl text-sm md:text-base font-black transition-all flex items-center justify-center gap-3 text-slate-500 hover:text-slate-700">
+                        <i class="fas fa-gavel"></i>
+                        اللائحة
+                    </button>
                 </div>
             </div>
         </div>
@@ -113,6 +117,10 @@
             <!-- Disciplinary records will be injected here -->
         </div>
 
+        <div id="content-rules" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <!-- Rules will be injected here -->
+        </div>
+
         <div id="content-awards" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <!-- Awards cards will be injected here -->
         </div>
@@ -128,6 +136,22 @@
             <p class="text-slate-400 text-xs mt-2">جميع الحقوق محفوظة للدورة الرمضانية</p>
             <p class="text-slate-400 text-xs mt-2">تابعنا: <a class="text-blue-600 hover:underline" href="https://www.facebook.com/ahmed.medhat.aloush" target="_blank" rel="noopener noreferrer">Facebook</a> | <a class="text-pink-600 hover:underline" href="https://www.instagram.com/aloush_404_found/" target="_blank" rel="noopener noreferrer">Instagram</a> | <a class="text-slate-700 hover:underline" href="https://www.tiktok.com/@ahmedaloush2005?_r=1&_t=ZS-93tlczbu54P" target="_blank" rel="noopener noreferrer">TikTok</a></p>
         </footer>
+    </div>
+
+    <!-- Team Modal -->
+    <div id="team-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+            <div id="modal-header" class="hero-gradient p-6 text-white relative">
+                <button id="close-modal" class="absolute top-4 left-4 w-8 h-8 flex items-center justify-center bg-white/20 rounded-full hover:bg-white/40 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2 id="modal-team-name" class="text-2xl font-black mb-1">اسم الفريق</h2>
+                <p id="modal-team-coach" class="text-blue-100 text-sm opacity-90 font-bold"></p>
+            </div>
+            <div class="p-6 max-h-[70vh] overflow-y-auto" id="modal-content">
+                <!-- Squad will be injected here -->
+            </div>
+        </div>
     </div>
 
     <script src="data.js"></script>
