@@ -163,11 +163,42 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTeamName.textContent = teamName;
         modalTeamCoach.textContent = `المدير الفني: ${team.coach || 'غير محدد'}`;
         
+        // Calculate team statistics
+        let teamStats = {
+            played: 0,
+            won: 0,
+            lost: 0,
+            draw: 0,
+            gf: 0,
+            ga: 0
+        };
+        
         const playerStats = {};
         (tournamentData.matches || []).forEach(match => {
             const isTeam1 = match.team1 === teamName;
             const isTeam2 = match.team2 === teamName;
             if (!isTeam1 && !isTeam2) return;
+
+            const score1 = parseInt(match.score1);
+            const score2 = parseInt(match.score2);
+            const isPlayed = !isNaN(score1) && !isNaN(score2);
+            
+            if (isPlayed) {
+                teamStats.played += 1;
+                if (isTeam1) {
+                    teamStats.gf += score1;
+                    teamStats.ga += score2;
+                    if (score1 > score2) teamStats.won += 1;
+                    else if (score1 < score2) teamStats.lost += 1;
+                    else teamStats.draw += 1;
+                } else {
+                    teamStats.gf += score2;
+                    teamStats.ga += score1;
+                    if (score2 > score1) teamStats.won += 1;
+                    else if (score2 < score1) teamStats.lost += 1;
+                    else teamStats.draw += 1;
+                }
+            }
 
             const scorers = isTeam1 ? (match.team1Scorers || match.scorers || []) : (match.team2Scorers || []);
             const yellows = isTeam1 ? (match.team1YellowCards || match.yellowCards || []) : (match.team2YellowCards || []);
@@ -191,7 +222,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const playerCount = (team.players || []).length;
+        const gd = teamStats.gf - teamStats.ga;
+        const points = (teamStats.won * 3) + teamStats.draw;
+        const avgGoals = teamStats.played > 0 ? (teamStats.gf / teamStats.played).toFixed(2) : '0.00';
+        const avgAgainst = teamStats.played > 0 ? (teamStats.ga / teamStats.played).toFixed(2) : '0.00';
+        
         let html = `
+            <div class="mb-4 grid grid-cols-2 gap-2">
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-center">
+                    <div class="text-[10px] text-blue-600 font-bold uppercase mb-1">المباريات</div>
+                    <div class="text-2xl font-black text-blue-700">${teamStats.played}</div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-3 text-center">
+                    <div class="text-[10px] text-emerald-600 font-bold uppercase mb-1">الفوز</div>
+                    <div class="text-2xl font-black text-emerald-700">${teamStats.won}</div>
+                </div>
+                <div class="bg-red-50 border border-red-100 rounded-lg p-3 text-center">
+                    <div class="text-[10px] text-red-600 font-bold uppercase mb-1">الخسارة</div>
+                    <div class="text-2xl font-black text-red-700">${teamStats.lost}</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 rounded-lg p-3 text-center">
+                    <div class="text-[10px] text-amber-600 font-bold uppercase mb-1">التعادل</div>
+                    <div class="text-2xl font-black text-amber-700">${teamStats.draw}</div>
+                </div>
+            </div>
+            <div class="mb-4 grid grid-cols-3 gap-2">
+                <div class="bg-orange-50 border border-orange-100 rounded-lg p-2 text-center">
+                    <div class="text-[9px] text-orange-600 font-bold uppercase mb-0.5">له</div>
+                    <div class="text-xl font-black text-orange-700">${teamStats.gf}</div>
+                    <div class="text-[9px] text-orange-500 mt-0.5">معدل: ${avgGoals}</div>
+                </div>
+                <div class="bg-purple-50 border border-purple-100 rounded-lg p-2 text-center">
+                    <div class="text-[9px] text-purple-600 font-bold uppercase mb-0.5">عليه</div>
+                    <div class="text-xl font-black text-purple-700">${teamStats.ga}</div>
+                    <div class="text-[9px] text-purple-500 mt-0.5">معدل: ${avgAgainst}</div>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-2 text-center">
+                    <div class="text-[9px] text-indigo-600 font-bold uppercase mb-0.5">الفارق</div>
+                    <div class="text-xl font-black ${gd > 0 ? 'text-green-700' : gd < 0 ? 'text-red-700' : 'text-slate-700'}">${gd > 0 ? '+' : ''}${gd}</div>
+                    <div class="text-[9px] text-indigo-500 mt-0.5">نقاط: ${points}</div>
+                </div>
+            </div>
             <div class="mb-4">
                 <h3 class="text-slate-400 text-[10px] uppercase font-black tracking-widest mb-2">حارس المرمى</h3>
                 <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 flex items-center justify-between">
@@ -237,10 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModal.addEventListener('click', () => {
         teamModal.classList.add('hidden');
         document.body.style.overflow = 'auto';
-    });
-
-    teamModal.addEventListener('click', (e) => {
-        if (e.target === teamModal) closeModal.click();
     });
 
     // Render Daily Schedule
@@ -429,8 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return { name, goals, team };
         }).sort((a, b) => b.goals - a.goals).slice(0, 10);
 
-        const topKeepers = Object.entries(cleanSheets).map(([teamName, count]) => {
-            const keeper = (tournamentData.teams || {})[teamName]?.goalkeeper || "غير معروف";
+        const topKeepers = Object.entries(cleanSheets).map(([keeper, count]) => {
+            const teamName = keeper;
             return { name: keeper, team: teamName, cleanSheets: count };
         }).sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 10);
 

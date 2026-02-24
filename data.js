@@ -392,9 +392,23 @@ const tournamentData = {
       "time": "8:30",
       "group": 9,
       "team1": "العمدوية",
-      "team2": "عمر جمال",
-      "score1": "",
-      "score2": ""
+      "team2": "أصدقاء عمر جمال",
+      "score1": "1",
+      "score2": "0",
+      "team1Scorers": [
+        "محمود ياسر"
+      ],
+      "team2Scorers": [],
+      "team1YellowCards": [
+        "فرج عيد"
+      ],
+      "team2YellowCards": [
+        "محمد رجب"
+      ],
+      "team1RedCards": [
+        "تامر سلومة (انذارين)"
+      ],
+      "team2RedCards": []
     },
     {
       "date": "الثلاثاء 24/2",
@@ -403,16 +417,32 @@ const tournamentData = {
       "team1": "ميدو خليل",
       "team2": "كوم أشو",
       "score1": "",
-      "score2": ""
+      "score2": "",
+      "status": "مؤجلة"
     },
     {
       "date": "الثلاثاء 24/2",
       "time": "9:50",
       "group": 7,
-      "team1": "اللؤلؤة",
-      "team2": "أصدقاء فتح الله",
-      "score1": "",
-      "score2": ""
+      "team1": "أصدقاء فتح الله",
+      "team2": "اللؤلؤة",
+      "score1": "3",
+      "score2": "2",
+      "team1Scorers": [
+        "محمد عزوز",
+        "بلال عون (هدفان)"
+      ],
+      "team2Scorers": [
+        "عبودة وليد",
+        "عبد الله احمد"
+      ],
+      "team1YellowCards": [
+        "عمر محمد",
+        "ابراهيم خالد"
+      ],
+      "team2YellowCards": [],
+      "team1RedCards": [],
+      "team2RedCards": []
     },
     {
       "date": "الثلاثاء 24/2",
@@ -420,8 +450,21 @@ const tournamentData = {
       "group": 10,
       "team1": "نسور البيضا",
       "team2": "فخر الدين",
-      "score1": "",
-      "score2": ""
+      "score1": "4",
+      "score2": "2",
+      "team1Scorers": [
+        "احمد شعبان",
+        "محمد احمد كهرباء",
+        "امير محمد",
+        "محمد منفي (هدف ذاتي)"
+      ],
+      "team2Scorers": [
+        "محمد مصطفي (هدفان)"
+      ],
+      "team1YellowCards": [],
+      "team2YellowCards": [],
+      "team1RedCards": [],
+      "team2RedCards": []
     },
     {
       "date": "الثلاثاء 24/2",
@@ -430,7 +473,8 @@ const tournamentData = {
       "team1": "الديسياوي",
       "team2": "فوزي غانم منشأة بسيون",
       "score1": "",
-      "score2": ""
+      "score2": "",
+      "status": "مؤجلة"
     },
     {
       "date": "الأربعاء 25/2",
@@ -457,6 +501,16 @@ const tournamentData = {
       "team1": "فوزي غانم منشأة بسيون",
       "team2": "دبورة",
       "score1": "",
+      "score2": "",
+      "status": "مؤجلة"
+    },
+    {
+      "date": "الأربعاء 25/2",
+      "time": "20:00",
+      "group": 11,
+      "team1": "الديسياوي",
+      "team2": "فوزي غانم منشأة بسيون",
+      "score1": "",
       "score2": ""
     },
     {
@@ -474,6 +528,16 @@ const tournamentData = {
       "group": 3,
       "team1": "أصدقاء محمد صبحي",
       "team2": "الحريفة",
+      "score1": "",
+      "score2": "",
+      "status": "مؤجلة"
+    },
+    {
+      "date": "الجمعة 27/2",
+      "time": "9:00",
+      "group": 6,
+      "team1": "ميدو خليل",
+      "team2": "كوم أشو",
       "score1": "",
       "score2": ""
     },
