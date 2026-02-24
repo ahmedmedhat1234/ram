@@ -23,6 +23,100 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('main-subtitle').textContent = tournamentData.subtitle;
     document.getElementById('group-count').textContent = tournamentData.groupCount || "12";
 
+    function normalizePlayerName(entry = '') {
+        return entry.split('(')[0].trim();
+    }
+
+    function getGoalCountFromEntry(entry = '') {
+        const text = String(entry);
+        const normalizedDigits = text.replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+
+        const numericMatch = normalizedDigits.match(/(\d+)\s*(?:هدف(?:ان|ين)?|أهداف|اهداف)/);
+        if (numericMatch) return parseInt(numericMatch[1], 10);
+
+        if (/سوبر\s*هاتريك/.test(normalizedDigits)) return 4;
+        if (/هاتريك/.test(normalizedDigits)) return 3;
+        if (/هدف(?:ان|ين)/.test(normalizedDigits)) return 2;
+
+        return 1;
+    }
+
+    function getComputedGroupStandings() {
+        const standingsByGroup = new Map();
+
+        (tournamentData.groups || []).forEach(group => {
+            const teamTable = new Map();
+            (group.teams || []).forEach(team => {
+                teamTable.set(team.name, {
+                    name: team.name,
+                    played: 0,
+                    won: 0,
+                    lost: 0,
+                    draw: 0,
+                    gf: 0,
+                    ga: 0,
+                    gd: 0,
+                    points: 0
+                });
+            });
+            standingsByGroup.set(group.id, teamTable);
+        });
+
+        (tournamentData.matches || []).forEach(match => {
+            const groupId = Number(match.group);
+            const groupStandings = standingsByGroup.get(groupId);
+            if (!groupStandings) return;
+
+            const s1 = parseInt(match.score1, 10);
+            const s2 = parseInt(match.score2, 10);
+            const isPlayed = !isNaN(s1) && !isNaN(s2);
+            if (!isPlayed) return;
+
+            const team1 = groupStandings.get(match.team1);
+            const team2 = groupStandings.get(match.team2);
+            if (!team1 || !team2) return;
+
+            team1.played += 1;
+            team2.played += 1;
+            team1.gf += s1;
+            team1.ga += s2;
+            team2.gf += s2;
+            team2.ga += s1;
+
+            if (s1 > s2) {
+                team1.won += 1;
+                team2.lost += 1;
+                team1.points += 3;
+            } else if (s2 > s1) {
+                team2.won += 1;
+                team1.lost += 1;
+                team2.points += 3;
+            } else {
+                team1.draw += 1;
+                team2.draw += 1;
+                team1.points += 1;
+                team2.points += 1;
+            }
+        });
+
+        const result = new Map();
+        standingsByGroup.forEach((teamsMap, groupId) => {
+            const rows = [...teamsMap.values()].map(team => ({
+                ...team,
+                gd: team.gf - team.ga
+            })).sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                if (b.gd !== a.gd) return b.gd - a.gd;
+                if (b.gf !== a.gf) return b.gf - a.gf;
+                return a.name.localeCompare(b.name, 'ar');
+            });
+
+            result.set(groupId, rows);
+        });
+
+        return result;
+    }
+
     // Helper to switch tabs
     function switchTab(activeTab, activeContent) {
         [tabDaily, tabGroups, tabStats, tabDisciplinary, tabRules].forEach(tab => {
@@ -61,17 +155,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const reds = isTeam1 ? (match.team1RedCards || []) : (match.team2RedCards || []);
 
             scorers.forEach(s => {
-                const name = s.split('(')[0].trim();
+                const name = normalizePlayerName(s);
                 playerStats[name] = playerStats[name] || { goals: 0, yellows: 0, reds: 0 };
-                playerStats[name].goals += 1;
+                playerStats[name].goals += getGoalCountFromEntry(s);
             });
             yellows.forEach(s => {
-                const name = s.split('(')[0].trim();
+                const name = normalizePlayerName(s);
                 playerStats[name] = playerStats[name] || { goals: 0, yellows: 0, reds: 0 };
                 playerStats[name].yellows += 1;
             });
             reds.forEach(s => {
-                const name = s.split('(')[0].trim();
+                const name = normalizePlayerName(s);
                 playerStats[name] = playerStats[name] || { goals: 0, yellows: 0, reds: 0 };
                 playerStats[name].reds += 1;
             });
@@ -230,8 +324,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render Group Tables
     function renderGroups(filter = '') {
         contentGroups.innerHTML = '';
+        const computedStandings = getComputedGroupStandings();
         (tournamentData.groups || []).forEach(group => {
-            const teams = group.teams || [];
+            const teams = computedStandings.get(group.id) || (group.teams || []);
             const hasTeamMatch = teams.some(t => (t.name || '').toLowerCase().includes(filter.toLowerCase()));
             if (filter && !hasTeamMatch) return;
 
@@ -281,8 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isPlayed) {
                 [... (match.team1Scorers || match.scorers || []), ... (match.team2Scorers || [])].forEach(s => {
-                    const name = s.split('(')[0].trim();
-                    scorers[name] = (scorers[name] || 0) + 1;
+                    const name = normalizePlayerName(s);
+                    scorers[name] = (scorers[name] || 0) + getGoalCountFromEntry(s);
                 });
 
                 if (s2 === 0) cleanSheets[match.team1] = (cleanSheets[match.team1] || 0) + 1;
@@ -373,11 +468,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         (tournamentData.matches || []).forEach(match => {
             [... (match.team1YellowCards || match.yellowCards || []), ... (match.team2YellowCards || [])].forEach(s => {
-                const name = s.split('(')[0].trim();
+                const name = normalizePlayerName(s);
                 yellows[name] = (yellows[name] || 0) + 1;
             });
             [... (match.team1RedCards || []), ... (match.team2RedCards || [])].forEach(r => {
-                const name = r.split('(')[0].trim();
+                const name = normalizePlayerName(r);
                 const team = (match.team1RedCards || []).includes(r) ? match.team1 : match.team2;
                 suspended.push({ name, team, match: "المباراة القادمة" });
             });
