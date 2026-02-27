@@ -1,7 +1,7 @@
 const tournamentData = {
   "title": "جدول الدورة الرمضانية",
   "subtitle": "المسئول عن الموقع والتنظيم مهندس احمد مدحت علوش",
-  "groupCount": 12,
+  "groupCount": 13,
   "matches": [
     {
       "date": "الجمعة 20/2",
@@ -970,6 +970,26 @@ const tournamentData = {
     }
   ],
   "teams": {
+    "اباظة 1": {
+      "coach": "",
+      "goalkeeper": "",
+      "players": []
+    },
+    "اسلام دياب": {
+      "coach": "",
+      "goalkeeper": "",
+      "players": []
+    },
+    "الاتحاد": {
+      "coach": "",
+      "goalkeeper": "",
+      "players": []
+    },
+    "x": {
+      "coach": "",
+      "goalkeeper": "",
+      "players": []
+    },
     "بلال الصاوي": {
       "coach": "بسام",
       "goalkeeper": "احمد مجدي",
@@ -1651,6 +1671,56 @@ const tournamentData = {
         },
         {
           "name": "أنطونيادس",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "المجموعة 13",
+      "teams": [
+        {
+          "name": "اباظة 1",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "اسلام دياب",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "الاتحاد",
+          "played": 0,
+          "won": 0,
+          "lost": 0,
+          "draw": 0,
+          "gf": 0,
+          "ga": 0,
+          "gd": 0,
+          "points": 0
+        },
+        {
+          "name": "x",
           "played": 0,
           "won": 0,
           "lost": 0,
