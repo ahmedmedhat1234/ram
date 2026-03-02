@@ -89,7 +89,20 @@ document.addEventListener('DOMContentLoaded', () => {
             team2.gf += s2;
             team2.ga += s1;
 
-            if (s1 > s2) {
+            if (Number.isFinite(match.team1Points) || Number.isFinite(match.team2Points)) {
+                team1.points += Number.isFinite(match.team1Points) ? Number(match.team1Points) : 0;
+                team2.points += Number.isFinite(match.team2Points) ? Number(match.team2Points) : 0;
+                if (s1 > s2) {
+                    team1.won += 1;
+                    team2.lost += 1;
+                } else if (s2 > s1) {
+                    team2.won += 1;
+                    team1.lost += 1;
+                } else {
+                    team1.draw += 1;
+                    team2.draw += 1;
+                }
+            } else if (s1 > s2) {
                 team1.won += 1;
                 team2.lost += 1;
                 team1.points += 3;
@@ -121,6 +134,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         return result;
+    }
+
+    function getRemainingMatchesByGroup() {
+        const remaining = new Map();
+        (tournamentData.matches || []).forEach(match => {
+            const s1 = parseInt(match.score1, 10);
+            const s2 = parseInt(match.score2, 10);
+            const isPlayed = !isNaN(s1) && !isNaN(s2);
+            if (isPlayed) return;
+
+            const groupId = Number(match.group);
+            if (!remaining.has(groupId)) remaining.set(groupId, new Map());
+            const groupMap = remaining.get(groupId);
+            groupMap.set(match.team1, (groupMap.get(match.team1) || 0) + 1);
+            groupMap.set(match.team2, (groupMap.get(match.team2) || 0) + 1);
+        });
+        return remaining;
+    }
+
+    function getQualifiedTeamsData() {
+        const standings = getComputedGroupStandings();
+        const remainingByGroup = getRemainingMatchesByGroup();
+        const guaranteed = [];
+        const guaranteedSet = new Set();
+
+        standings.forEach((teams, groupId) => {
+            const remain = remainingByGroup.get(groupId) || new Map();
+            teams.forEach(team => {
+                const threats = teams.filter(other => other.name !== team.name && (other.points + ((remain.get(other.name) || 0) * 3)) >= team.points);
+
+                if (threats.length <= 1) {
+                    guaranteed.push({
+                        groupId,
+                        team: team.name
+                    });
+                    guaranteedSet.add(team.name);
+                }
+            });
+        });
+
+        return { guaranteed, guaranteedSet };
     }
 
     function getNextScheduledMatchForTeam(teamName, fromMatchIndex) {
@@ -411,6 +465,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroups(filter = '') {
         contentGroups.innerHTML = '';
         const computedStandings = getComputedGroupStandings();
+        const qualifiedData = getQualifiedTeamsData();
+
+        const qualifiedCard = document.createElement('div');
+        qualifiedCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col mb-4 md:col-span-2';
+        qualifiedCard.innerHTML = `
+            <div class="bg-emerald-50 border-b border-emerald-100 px-4 py-3 font-bold text-emerald-800 flex items-center justify-between text-sm">
+                <span>المتأهلون</span>
+                <i class="fas fa-star text-amber-500 text-xs"></i>
+            </div>
+            <div class="p-4 text-xs text-slate-600 leading-6">
+                ${qualifiedData.guaranteed.length ? qualifiedData.guaranteed.map(item => `<div>⭐ المجموعة ${item.groupId}: ${item.team}</div>`).join('') : '<div>لا يوجد فريق ضمن التأهل رسميًا حتى الآن وفق النظام الحالي (الأول والثاني + أفضل 6 ثوالث).</div>'}
+            </div>
+        `;
+        contentGroups.appendChild(qualifiedCard);
+
         (tournamentData.groups || []).forEach(group => {
             const teams = computedStandings.get(group.id) || (group.teams || []);
             const hasTeamMatch = teams.some(t => (t.name || '').toLowerCase().includes(filter.toLowerCase()));
@@ -444,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
             teams.forEach((team, idx) => {
                 tableHTML += `
                     <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="window.openTeamModal('${team.name}')">
-                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name}</td>
+                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name}${qualifiedData.guaranteedSet.has(team.name) ? ' ⭐' : ''}</td>
                         <td class="px-1.5 py-2.5 text-center text-slate-600 font-medium">${team.played}</td>
                         <td class="px-1.5 py-2.5 text-center text-emerald-600 font-bold">${team.won}</td>
                         <td class="px-1.5 py-2.5 text-center text-blue-600 font-bold">${team.draw}</td>
