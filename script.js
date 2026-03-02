@@ -154,22 +154,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getQualifiedTeamsData() {
-        const standings = getComputedGroupStandings();
-        const remainingByGroup = getRemainingMatchesByGroup();
         const guaranteed = [];
         const guaranteedSet = new Set();
 
-        standings.forEach((teams, groupId) => {
-            const remain = remainingByGroup.get(groupId) || new Map();
-            teams.forEach(team => {
-                const threats = teams.filter(other => other.name !== team.name && (other.points + ((remain.get(other.name) || 0) * 3)) >= team.points);
+        (tournamentData.groups || []).forEach(group => {
+            const teams = (group.teams || []).map(team => team.name);
+            if (teams.length < 2) return;
 
-                if (threats.length <= 1) {
-                    guaranteed.push({
-                        groupId,
-                        team: team.name
+            const points = Object.fromEntries(teams.map(name => [name, 0]));
+            const pairResult = new Map();
+
+            (tournamentData.matches || []).forEach(match => {
+                if (Number(match.group) !== Number(group.id)) return;
+                if (!teams.includes(match.team1) || !teams.includes(match.team2)) return;
+
+                const s1 = parseInt(match.score1, 10);
+                const s2 = parseInt(match.score2, 10);
+                if (isNaN(s1) || isNaN(s2)) return;
+
+                const pairKey = [match.team1, match.team2].sort((a, b) => a.localeCompare(b, 'ar')).join('|');
+                pairResult.set(pairKey, { team1: match.team1, team2: match.team2, score1: s1, score2: s2 });
+            });
+
+            pairResult.forEach(result => {
+                if (result.score1 > result.score2) points[result.team1] += 3;
+                else if (result.score2 > result.score1) points[result.team2] += 3;
+                else {
+                    points[result.team1] += 1;
+                    points[result.team2] += 1;
+                }
+            });
+
+            const remainingPairs = [];
+            for (let i = 0; i < teams.length; i += 1) {
+                for (let j = i + 1; j < teams.length; j += 1) {
+                    const pairKey = [teams[i], teams[j]].sort((a, b) => a.localeCompare(b, 'ar')).join('|');
+                    if (!pairResult.has(pairKey)) {
+                        remainingPairs.push({ team1: teams[i], team2: teams[j] });
+                    }
+                }
+            }
+
+            const worstRank = Object.fromEntries(teams.map(name => [name, 1]));
+
+            function evaluateScenario(matchIndex, scenarioPoints) {
+                if (matchIndex >= remainingPairs.length) {
+                    teams.forEach(teamName => {
+                        const teamPoints = scenarioPoints[teamName] || 0;
+                        const higherTeams = teams.filter(other => (scenarioPoints[other] || 0) > teamPoints).length;
+                        const equalTeams = teams.filter(other => other !== teamName && (scenarioPoints[other] || 0) === teamPoints).length;
+                        worstRank[teamName] = Math.max(worstRank[teamName], higherTeams + equalTeams + 1);
                     });
-                    guaranteedSet.add(team.name);
+                    return;
+                }
+
+                const match = remainingPairs[matchIndex];
+
+                scenarioPoints[match.team1] = (scenarioPoints[match.team1] || 0) + 3;
+                evaluateScenario(matchIndex + 1, scenarioPoints);
+                scenarioPoints[match.team1] -= 3;
+
+                scenarioPoints[match.team1] = (scenarioPoints[match.team1] || 0) + 1;
+                scenarioPoints[match.team2] = (scenarioPoints[match.team2] || 0) + 1;
+                evaluateScenario(matchIndex + 1, scenarioPoints);
+                scenarioPoints[match.team1] -= 1;
+                scenarioPoints[match.team2] -= 1;
+
+                scenarioPoints[match.team2] = (scenarioPoints[match.team2] || 0) + 3;
+                evaluateScenario(matchIndex + 1, scenarioPoints);
+                scenarioPoints[match.team2] -= 3;
+            }
+
+            evaluateScenario(0, { ...points });
+
+            teams.forEach(teamName => {
+                if (worstRank[teamName] <= 2) {
+                    guaranteed.push({ groupId: group.id, team: teamName });
+                    guaranteedSet.add(teamName);
                 }
             });
         });
