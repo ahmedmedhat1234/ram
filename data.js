@@ -650,8 +650,14 @@ const tournamentData = {
       "group": 5,
       "team1": "شباب دربالة",
       "team2": "حريفة مساكن 1",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "7",
+      "team1Scorers": [],
+      "team2Scorers": [
+        "محمد سلامة (4 أهداف)",
+        "كشري (هدفان)",
+        "محمد مصطفي"
+      ]
     },
     {
       "date": "السبت 28/2",
@@ -1539,6 +1545,17 @@ const tournamentData = {
       "name": "المجموعة 5",
       "teams": [
         {
+          "name": "حريفة مساكن 1",
+          "played": 2,
+          "won": 2,
+          "lost": 0,
+          "draw": 0,
+          "gf": 10,
+          "ga": 3,
+          "gd": 7,
+          "points": 6
+        },
+        {
           "name": "شباب العدلي",
           "played": 2,
           "won": 1,
@@ -1550,36 +1567,25 @@ const tournamentData = {
           "points": 3
         },
         {
-          "name": "حريفة مساكن 1",
-          "played": 1,
-          "won": 1,
-          "lost": 0,
-          "draw": 0,
-          "gf": 3,
-          "ga": 2,
-          "gd": 1,
-          "points": 3
-        },
-        {
           "name": "شباب دربالة",
-          "played": 0,
-          "won": 0,
-          "lost": 0,
+          "played": 2,
+          "won": 1,
+          "lost": 1,
           "draw": 0,
-          "gf": 0,
-          "ga": 0,
-          "gd": 0,
-          "points": 0
+          "gf": 4,
+          "ga": 7,
+          "gd": -3,
+          "points": 2
         },
         {
           "name": "الحاوي",
-          "played": 1,
+          "played": 2,
           "won": 0,
-          "lost": 1,
+          "lost": 2,
           "draw": 0,
           "gf": 0,
-          "ga": 3,
-          "gd": -3,
+          "ga": 6,
+          "gd": -6,
           "points": 0
         }
       ]
