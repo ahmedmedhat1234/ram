@@ -738,15 +738,18 @@ const tournamentData = {
       "group": 5,
       "team1": "الحاوي",
       "team2": "شباب دربالة",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "3",
+      "team1Points": 0,
+      "team2Points": 2,
+      "status": "احتساب إداري"
     },
     {
       "date": "الاثنين 2/3",
       "time": "9:45",
       "group": 8,
       "team1": "مسعد أبورابح",
-      "team2": "علي لمونه",
+      "team2": "الاتحاد",
       "score1": "",
       "score2": ""
     },
@@ -900,8 +903,11 @@ const tournamentData = {
       "group": 5,
       "team1": "الحاوي",
       "team2": "حريفة مساكن 1",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "3",
+      "team1Points": 0,
+      "team2Points": 2,
+      "status": "احتساب إداري"
     },
     {
       "date": "الجمعة 6/3",
@@ -944,7 +950,7 @@ const tournamentData = {
       "time": "11:20",
       "group": 8,
       "team1": "الجديدة",
-      "team2": "علي لمونه",
+      "team2": "الاتحاد",
       "score1": "",
       "score2": ""
     },
@@ -962,7 +968,7 @@ const tournamentData = {
       "time": "9:45",
       "group": 8,
       "team1": "حسن الندي",
-      "team2": "علي لمونه",
+      "team2": "الاتحاد",
       "score1": "",
       "score2": ""
     },
@@ -1705,7 +1711,7 @@ const tournamentData = {
           "points": 3
         },
         {
-          "name": "علي لمونه",
+          "name": "الاتحاد",
           "played": 0,
           "won": 0,
           "lost": 0,
