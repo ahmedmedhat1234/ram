@@ -689,8 +689,9 @@ const tournamentData = {
         "عمر ابو نار"
       ],
       "team2Scorers": [
-        "احمد حسني (هدفان)",
-        "طارق السيد"
+        "احمد عاطف",
+        "شيكا",
+        "محمد رفاعي"
       ]
     },
     {
@@ -756,8 +757,19 @@ const tournamentData = {
       "group": 8,
       "team1": "مسعد أبورابح",
       "team2": "الاتحاد",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "2",
+      "team1Scorers": [
+        "عبد الرحمن الصوت"
+      ],
+      "team2Scorers": [
+        "محمود شوقي (هدفان)"
+      ],
+      "team1YellowCards": [],
+      "team2YellowCards": [
+        "محمود شوقي",
+        "محمود شوقي"
+      ]
     },
     {
       "date": "الاثنين 2/3",
@@ -765,8 +777,10 @@ const tournamentData = {
       "group": 9,
       "team1": "العمدوية",
       "team2": "شباب أنطون يادس",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "0",
+      "team1Scorers": [],
+      "team2Scorers": []
     },
     {
       "date": "الاثنين 2/3",
@@ -774,8 +788,18 @@ const tournamentData = {
       "group": 9,
       "team1": "عمر جمال",
       "team2": "نجوم الحمراء",
-      "score1": "",
-      "score2": ""
+      "score1": "2",
+      "score2": "8",
+      "team1Scorers": [
+        "محمد رجب",
+        "هدف عكسي"
+      ],
+      "team2Scorers": [
+        "يحيى سعيد (4 أهداف)",
+        "حازم حمادة (هدفان)",
+        "احمد بسام",
+        "صبحي سامي"
+      ]
     },
     {
       "date": "الثلاثاء 3/3",
