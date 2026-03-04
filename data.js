@@ -211,22 +211,11 @@ const tournamentData = {
       "group": 5,
       "team1": "شباب العدلي",
       "team2": "حريفة مساكن 1",
-      "score1": "2",
+      "score1": "0",
       "score2": "3",
-      "team1Scorers": [
-        "احمد تريكة",
-        "ايهاب السيد"
-      ],
-      "team2Scorers": [
-        "حمزة النشار",
-        "محمد مصطفي",
-        "محمد سلامة"
-      ],
-      "team1YellowCards": [
-        "كرومبو",
-        "ايهاب السيد"
-      ],
-      "team2YellowCards": []
+      "team1Points": 0,
+      "team2Points": 2,
+      "status": "احتساب إداري"
     },
     {
       "date": "الأحد 22/2",
@@ -625,8 +614,9 @@ const tournamentData = {
       "team2": "شباب العدلي",
       "score1": "0",
       "score2": "3",
-      "team1Scorers": [],
-      "team2Scorers": []
+      "team1Points": 0,
+      "team2Points": 0,
+      "status": "احتساب إداري"
     },
     {
       "date": "السبت 28/2",
@@ -915,8 +905,11 @@ const tournamentData = {
       "group": 5,
       "team1": "شباب دربالة",
       "team2": "شباب العدلي",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "0",
+      "team1Points": 2,
+      "team2Points": 0,
+      "status": "احتساب إداري"
     },
     {
       "date": "الجمعة 6/3",
