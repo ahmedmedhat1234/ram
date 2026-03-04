@@ -381,7 +381,7 @@ const tournamentData = {
       "time": "8:30",
       "group": 9,
       "team1": "العمدوية",
-      "team2": "أصدقاء عمر جمال",
+      "team2": "عمر جمال",
       "score1": "1",
       "score2": "0",
       "team1Scorers": [
