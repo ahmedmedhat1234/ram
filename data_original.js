@@ -627,8 +627,8 @@ const tournamentData = {
       "group": 10,
       "team1": "فخر الدين",
       "team2": "الرويني",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "6"
     },
     {
       "date": "الثلاثاء 3/3",
@@ -636,8 +636,8 @@ const tournamentData = {
       "group": 10,
       "team1": "نسور البيضا",
       "team2": "أباظة",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "0"
     },
     {
       "date": "الثلاثاء 3/3",
@@ -645,8 +645,8 @@ const tournamentData = {
       "group": 12,
       "team1": "حميصة",
       "team2": "أنطونيادس",
-      "score1": "",
-      "score2": ""
+      "score1": "2",
+      "score2": "5"
     },
     {
       "date": "الثلاثاء 3/3",
@@ -843,8 +843,8 @@ const tournamentData = {
       "group": 10,
       "team1": "نسور البيضا",
       "team2": "الرويني",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "0"
     },
     {
       "date": "الاثنين 9/3",
