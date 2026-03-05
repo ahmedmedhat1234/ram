@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return [...teamRows].sort((a, b) => compareTeamsWithTiebreak(a, b, groupMatches));
     }
 
-    function getQualificationSnapshot(iterations = 4000) {
+    function getQualificationSnapshot(iterations = 5000) {
         const groups = tournamentData.groups || [];
         const allMatches = tournamentData.matches || [];
         const playedMatches = allMatches.filter(match => !isNaN(parseInt(match.score1, 10)) && !isNaN(parseInt(match.score2, 10)));
@@ -109,9 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const scenarios = remainingMatches.length ? iterations : 1;
 
         const qualifyCount = {};
+        const firstCount = {};
+        const secondCount = {};
+        const bestThirdCount = {};
         const teamGroup = {};
         groups.forEach(group => (group.teams || []).forEach(team => {
             qualifyCount[team.name] = 0;
+            firstCount[team.name] = 0;
+            secondCount[team.name] = 0;
+            bestThirdCount[team.name] = 0;
             teamGroup[team.name] = group.id;
         }));
 
@@ -172,8 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const thirdTeams = [];
             groupTables.forEach((ranked, groupId) => {
-                if (ranked[0]) qualifyCount[ranked[0].name] += 1;
-                if (ranked[1]) qualifyCount[ranked[1].name] += 1;
+                if (ranked[0]) {
+                    qualifyCount[ranked[0].name] += 1;
+                    firstCount[ranked[0].name] += 1;
+                }
+                if (ranked[1]) {
+                    qualifyCount[ranked[1].name] += 1;
+                    secondCount[ranked[1].name] += 1;
+                }
                 if (ranked[2]) thirdTeams.push({ ...ranked[2], groupId });
             });
 
@@ -185,12 +197,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     return a.name.localeCompare(b.name, 'ar');
                 })
                 .slice(0, 6)
-                .forEach(team => { qualifyCount[team.name] += 1; });
+                .forEach(team => {
+                    qualifyCount[team.name] += 1;
+                    bestThirdCount[team.name] += 1;
+                });
         }
 
         const chancesByTeam = {};
+        const firstChanceByTeam = {};
+        const secondChanceByTeam = {};
+        const bestThirdChanceByTeam = {};
         Object.keys(qualifyCount).forEach(team => {
             chancesByTeam[team] = scenarios ? (qualifyCount[team] / scenarios) * 100 : 0;
+            firstChanceByTeam[team] = scenarios ? (firstCount[team] / scenarios) * 100 : 0;
+            secondChanceByTeam[team] = scenarios ? (secondCount[team] / scenarios) * 100 : 0;
+            bestThirdChanceByTeam[team] = scenarios ? (bestThirdCount[team] / scenarios) * 100 : 0;
         });
 
         const guaranteed = Object.entries(chancesByTeam)
@@ -199,6 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return {
             chancesByTeam,
+            firstChanceByTeam,
+            secondChanceByTeam,
+            bestThirdChanceByTeam,
             guaranteed,
             guaranteedSet: new Set(guaranteed.map(item => item.team))
         };
@@ -783,7 +807,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const expectedData = Object.entries(qualificationSnapshot.chancesByTeam).map(([team, chance]) => ({
             team,
             groupId: ((tournamentData.groups || []).find(g => (g.teams || []).some(t => t.name === team)) || {}).id || '-',
-            chance
+            chance,
+            firstChance: qualificationSnapshot.firstChanceByTeam[team] || 0,
+            secondChance: qualificationSnapshot.secondChanceByTeam[team] || 0,
+            bestThirdChance: qualificationSnapshot.bestThirdChanceByTeam[team] || 0
         })).sort((a, b) => b.chance - a.chance);
 
         const qualifiedCard = document.createElement('div');
@@ -808,7 +835,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="fas fa-chart-line text-blue-500 text-xs"></i>
             </div>
             <div class="p-4 text-xs text-slate-600 leading-6">
-                ${expectedData.map(item => `<div>${item.team} (المجموعة ${item.groupId}): <span class="font-bold text-blue-700">${item.chance.toFixed(1)}%</span></div>`).join('')}
+                <div class="text-[11px] text-slate-500 mb-2">مبنية على محاكاة حتى إكمال كل فريق 3 مباريات (المتبقي من دور المجموعات).</div>
+                ${expectedData.map(item => `
+                    <div class="py-1 border-b border-slate-100 last:border-b-0">
+                        <div>${item.team} (المجموعة ${item.groupId}): <span class="font-bold text-blue-700">${item.chance.toFixed(1)}%</span></div>
+                        <div class="text-[11px] text-slate-500">أول: ${item.firstChance.toFixed(1)}% | ثاني: ${item.secondChance.toFixed(1)}% | أفضل ثالث: ${item.bestThirdChance.toFixed(1)}%</div>
+                    </div>
+                `).join('')}
             </div>
         `;
         contentGroups.appendChild(expectedCard);
