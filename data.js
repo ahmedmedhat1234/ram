@@ -833,8 +833,18 @@ const tournamentData = {
       "group": 12,
       "team1": "النصر",
       "team2": "PH",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "1",
+      "team1Scorers": [
+        "اسلام (هدفان)",
+        "منعم"
+      ],
+      "team2Scorers": [
+        "محمود طلبه"
+      ],
+      "team2YellowCards": [
+        "ميدو عبيد"
+      ]
     },
     {
       "date": "الأربعاء 4/3",
@@ -842,8 +852,15 @@ const tournamentData = {
       "group": 1,
       "team1": "نسور مصر",
       "team2": "نسور دفشو",
-      "score1": "",
-      "score2": ""
+      "score1": "2",
+      "score2": "2",
+      "team1Scorers": [
+        "عيد مرزوق (هدفان)"
+      ],
+      "team2Scorers": [
+        "بربش",
+        "محمد حاتم (الكوتش)"
+      ]
     },
     {
       "date": "الأربعاء 4/3",
@@ -851,8 +868,15 @@ const tournamentData = {
       "group": 1,
       "team1": "بلال الصاوي",
       "team2": "كابيتانو",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "2",
+      "team1Scorers": [
+        "محمد ابراهيم"
+      ],
+      "team2Scorers": [
+        "دريشة",
+        "محمد وائل"
+      ]
     },
     {
       "date": "الأربعاء 4/3",
@@ -860,8 +884,8 @@ const tournamentData = {
       "group": 2,
       "team1": "عزبة يوسف",
       "team2": "المغلاني",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "4"
     },
     {
       "date": "الخميس 5/3",
@@ -885,10 +909,10 @@ const tournamentData = {
       "date": "الخميس 5/3",
       "time": "10:30",
       "group": 2,
-      "team1": "الجزيرة",
-      "team2": "نجوم أبوشادي",
-      "score1": "",
-      "score2": ""
+      "team1": "نجوم أبوشادي",
+      "team2": "عزبة يوسف",
+      "score1": "3",
+      "score2": "0"
     },
     {
       "date": "الخميس 5/3",
@@ -1028,8 +1052,8 @@ const tournamentData = {
       "group": 11,
       "team1": "دبورة",
       "team2": "الديسياوي",
-      "score1": "",
-      "score2": ""
+      "score1": "7",
+      "score2": "1"
     },
     {
       "date": "الاثنين 9/3",
@@ -1086,8 +1110,8 @@ const tournamentData = {
       "score2": ""
     },
     {
-      "date": "الأربعاء 11/3",
-      "time": "9:00",
+      "date": "الجمعة 6/3",
+      "time": "8:20",
       "group": 13,
       "team1": "اباظة أ",
       "team2": "اسلام دياب",
@@ -1095,8 +1119,8 @@ const tournamentData = {
       "score2": "1"
     },
     {
-      "date": "الأربعاء 11/3",
-      "time": "9:45",
+      "date": "السبت 7/3",
+      "time": "8:20",
       "group": 13,
       "team1": "الدوكش",
       "team2": "x",
@@ -1104,8 +1128,8 @@ const tournamentData = {
       "score2": "1"
     },
     {
-      "date": "الأربعاء 11/3",
-      "time": "10:30",
+      "date": "الأحد 8/3",
+      "time": "8:20",
       "group": 13,
       "team1": "اباظة أ",
       "team2": "الدوكش",
@@ -1113,8 +1137,8 @@ const tournamentData = {
       "score2": "0"
     },
     {
-      "date": "الأربعاء 11/3",
-      "time": "11:20",
+      "date": "الاثنين 9/3",
+      "time": "8:20",
       "group": 13,
       "team1": "اسلام دياب",
       "team2": "x",
@@ -1122,8 +1146,8 @@ const tournamentData = {
       "score2": "1"
     },
     {
-      "date": "الخميس 12/3",
-      "time": "9:00",
+      "date": "الثلاثاء 10/3",
+      "time": "8:20",
       "group": 13,
       "team1": "اباظة أ",
       "team2": "x",
@@ -1131,8 +1155,8 @@ const tournamentData = {
       "score2": "2"
     },
     {
-      "date": "الخميس 12/3",
-      "time": "9:45",
+      "date": "الأربعاء 11/3",
+      "time": "8:20",
       "group": 13,
       "team1": "اسلام دياب",
       "team2": "الدوكش",

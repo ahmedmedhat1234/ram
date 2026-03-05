@@ -238,6 +238,104 @@ document.addEventListener('DOMContentLoaded', () => {
         return { guaranteed, guaranteedSet };
     }
 
+    function getExpectedQualificationData() {
+        const expected = [];
+
+        (tournamentData.groups || []).forEach(group => {
+            const teams = (group.teams || []).map(team => team.name);
+            if (teams.length < 2) return;
+
+            const currentPoints = Object.fromEntries(teams.map(name => [name, 0]));
+            const playedPairs = new Map();
+
+            (tournamentData.matches || []).forEach(match => {
+                if (Number(match.group) !== Number(group.id)) return;
+                if (!teams.includes(match.team1) || !teams.includes(match.team2)) return;
+
+                const s1 = parseInt(match.score1, 10);
+                const s2 = parseInt(match.score2, 10);
+                if (isNaN(s1) || isNaN(s2)) return;
+
+                const pairKey = [match.team1, match.team2].sort((a, b) => a.localeCompare(b, 'ar')).join('|');
+                playedPairs.set(pairKey, true);
+
+                if (s1 > s2) currentPoints[match.team1] += 3;
+                else if (s2 > s1) currentPoints[match.team2] += 3;
+                else {
+                    currentPoints[match.team1] += 1;
+                    currentPoints[match.team2] += 1;
+                }
+            });
+
+            const remainingPairs = [];
+            for (let i = 0; i < teams.length; i += 1) {
+                for (let j = i + 1; j < teams.length; j += 1) {
+                    const pairKey = [teams[i], teams[j]].sort((a, b) => a.localeCompare(b, 'ar')).join('|');
+                    if (!playedPairs.has(pairKey)) remainingPairs.push({ team1: teams[i], team2: teams[j] });
+                }
+            }
+
+            const qualificationScore = Object.fromEntries(teams.map(name => [name, 0]));
+            const totalScenarios = Math.pow(3, remainingPairs.length);
+
+            function evaluateScenario(matchIndex, scenarioPoints) {
+                if (matchIndex >= remainingPairs.length) {
+                    const tiers = [...teams]
+                        .sort((a, b) => (scenarioPoints[b] || 0) - (scenarioPoints[a] || 0))
+                        .reduce((acc, team) => {
+                            const pts = scenarioPoints[team] || 0;
+                            const last = acc[acc.length - 1];
+                            if (!last || last.points !== pts) acc.push({ points: pts, teams: [team] });
+                            else last.teams.push(team);
+                            return acc;
+                        }, []);
+
+                    let slots = 2;
+                    tiers.forEach(tier => {
+                        if (slots <= 0) return;
+                        if (slots >= tier.teams.length) {
+                            tier.teams.forEach(team => { qualificationScore[team] += 1; });
+                            slots -= tier.teams.length;
+                        } else {
+                            const share = slots / tier.teams.length;
+                            tier.teams.forEach(team => { qualificationScore[team] += share; });
+                            slots = 0;
+                        }
+                    });
+                    return;
+                }
+
+                const match = remainingPairs[matchIndex];
+
+                scenarioPoints[match.team1] = (scenarioPoints[match.team1] || 0) + 3;
+                evaluateScenario(matchIndex + 1, scenarioPoints);
+                scenarioPoints[match.team1] -= 3;
+
+                scenarioPoints[match.team1] = (scenarioPoints[match.team1] || 0) + 1;
+                scenarioPoints[match.team2] = (scenarioPoints[match.team2] || 0) + 1;
+                evaluateScenario(matchIndex + 1, scenarioPoints);
+                scenarioPoints[match.team1] -= 1;
+                scenarioPoints[match.team2] -= 1;
+
+                scenarioPoints[match.team2] = (scenarioPoints[match.team2] || 0) + 3;
+                evaluateScenario(matchIndex + 1, scenarioPoints);
+                scenarioPoints[match.team2] -= 3;
+            }
+
+            evaluateScenario(0, { ...currentPoints });
+
+            teams.forEach(team => {
+                expected.push({
+                    groupId: group.id,
+                    team,
+                    chance: totalScenarios ? ((qualificationScore[team] / totalScenarios) * 100) : 0
+                });
+            });
+        });
+
+        return expected.sort((a, b) => b.chance - a.chance);
+    }
+
     function getNextScheduledMatchForTeam(teamName, fromMatchIndex) {
         const matches = tournamentData.matches || [];
         for (let i = fromMatchIndex + 1; i < matches.length; i += 1) {
@@ -527,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentGroups.innerHTML = '';
         const computedStandings = getComputedGroupStandings();
         const qualifiedData = getQualifiedTeamsData();
+        const expectedData = getExpectedQualificationData();
 
         const qualifiedCard = document.createElement('div');
         qualifiedCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col mb-4 md:col-span-2';
@@ -536,10 +635,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="fas fa-star text-amber-500 text-xs"></i>
             </div>
             <div class="p-4 text-xs text-slate-600 leading-6">
+                <div class="font-bold text-emerald-700 mb-2">إجمالي الفرق الصاعدة رسميًا: ${qualifiedData.guaranteed.length}</div>
                 ${qualifiedData.guaranteed.length ? qualifiedData.guaranteed.map(item => `<div>⭐ المجموعة ${item.groupId}: ${item.team}</div>`).join('') : '<div>لا يوجد فريق ضمن التأهل رسميًا حتى الآن وفق النظام الحالي (الأول والثاني + أفضل 6 ثوالث).</div>'}
             </div>
         `;
         contentGroups.appendChild(qualifiedCard);
+
+        const expectedCard = document.createElement('div');
+        expectedCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col mb-4 md:col-span-2';
+        expectedCard.innerHTML = `
+            <div class="bg-blue-50 border-b border-blue-100 px-4 py-3 font-bold text-blue-800 flex items-center justify-between text-sm">
+                <span>الفرق المتوقع صعودها (احتمالات)</span>
+                <i class="fas fa-chart-line text-blue-500 text-xs"></i>
+            </div>
+            <div class="p-4 text-xs text-slate-600 leading-6">
+                ${expectedData.map(item => `<div>${item.team} (المجموعة ${item.groupId}): <span class="font-bold text-blue-700">${item.chance.toFixed(1)}%</span></div>`).join('')}
+            </div>
+        `;
+        contentGroups.appendChild(expectedCard);
 
         (tournamentData.groups || []).forEach(group => {
             const teams = computedStandings.get(group.id) || (group.teams || []);
