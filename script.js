@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return [...teamRows].sort((a, b) => compareTeamsWithTiebreak(a, b, groupMatches));
     }
 
+    function getQualificationSnapshot(iterations = 4000) {
     function getQualificationSnapshot(iterations = 5000) {
         const groups = tournamentData.groups || [];
         const allMatches = tournamentData.matches || [];
@@ -109,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const scenarios = remainingMatches.length ? iterations : 1;
 
         const qualifyCount = {};
+        const teamGroup = {};
+        groups.forEach(group => (group.teams || []).forEach(team => {
+            qualifyCount[team.name] = 0;
         const firstCount = {};
         const secondCount = {};
         const bestThirdCount = {};
@@ -178,6 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const thirdTeams = [];
             groupTables.forEach((ranked, groupId) => {
+                if (ranked[0]) qualifyCount[ranked[0].name] += 1;
+                if (ranked[1]) qualifyCount[ranked[1].name] += 1;
                 if (ranked[0]) {
                     qualifyCount[ranked[0].name] += 1;
                     firstCount[ranked[0].name] += 1;
@@ -197,6 +203,52 @@ document.addEventListener('DOMContentLoaded', () => {
                     return a.name.localeCompare(b.name, 'ar');
                 })
                 .slice(0, 6)
+                .forEach(team => { qualifyCount[team.name] += 1; });
+        }
+
+        const chancesByTeam = {};
+        Object.keys(qualifyCount).forEach(team => {
+            chancesByTeam[team] = scenarios ? (qualifyCount[team] / scenarios) * 100 : 0;
+        });
+
+        let guaranteed = [];
+        if (!remainingMatches.length) {
+            const finalGroupTables = new Map();
+            const completedStandings = getComputedGroupStandings();
+            groups.forEach(group => {
+                const ranked = rankGroupTeams(
+                    group.id,
+                    completedStandings.get(group.id) || [],
+                    playedMatches
+                );
+                finalGroupTables.set(group.id, ranked);
+            });
+
+            const qualifiedNow = [];
+            const thirdTeams = [];
+            finalGroupTables.forEach((ranked, groupId) => {
+                if (ranked[0]) qualifiedNow.push({ team: ranked[0].name, groupId });
+                if (ranked[1]) qualifiedNow.push({ team: ranked[1].name, groupId });
+                if (ranked[2]) thirdTeams.push({ ...ranked[2], groupId });
+            });
+
+            thirdTeams
+                .sort((a, b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    if (b.gd !== a.gd) return b.gd - a.gd;
+                    if (b.gf !== a.gf) return b.gf - a.gf;
+                    return a.name.localeCompare(b.name, 'ar');
+                })
+                .slice(0, 6)
+                .forEach(team => qualifiedNow.push({ team: team.name, groupId: team.groupId }));
+
+            guaranteed = qualifiedNow;
+        }
+
+        return {
+            chancesByTeam,
+            guaranteed,
+            guaranteedSet: new Set(guaranteed.map(item => `${item.groupId}|${item.team}`))
                 .forEach(team => {
                     qualifyCount[team.name] += 1;
                     bestThirdCount[team.name] += 1;
@@ -807,6 +859,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const expectedData = Object.entries(qualificationSnapshot.chancesByTeam).map(([team, chance]) => ({
             team,
             groupId: ((tournamentData.groups || []).find(g => (g.teams || []).some(t => t.name === team)) || {}).id || '-',
+            chance
             chance,
             firstChance: qualificationSnapshot.firstChanceByTeam[team] || 0,
             secondChance: qualificationSnapshot.secondChanceByTeam[team] || 0,
@@ -821,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="fas fa-star text-amber-500 text-xs"></i>
             </div>
             <div class="p-4 text-xs text-slate-600 leading-6">
-                <div class="font-bold text-emerald-700 mb-2">إجمالي الفرق الصاعدة رسميًا: ${qualifiedData.guaranteed.length}</div>
+                <div class="font-bold text-emerald-700 mb-2">إجمالي الفرق الصاعدة رسميًا (بعد اكتمال كل المباريات): ${qualifiedData.guaranteed.length}</div>
                 ${qualifiedData.guaranteed.length ? qualifiedData.guaranteed.map(item => `<div>⭐ المجموعة ${item.groupId}: ${item.team}</div>`).join('') : '<div>لا يوجد فريق ضمن التأهل رسميًا حتى الآن وفق النظام الحالي (الأول والثاني + أفضل 6 ثوالث).</div>'}
             </div>
         `;
@@ -879,6 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
             teams.forEach((team, idx) => {
                 tableHTML += `
                     <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="window.openTeamModal('${team.name}')">
+                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name} <span class='text-[10px] text-blue-700'>(${(qualificationSnapshot.chancesByTeam[team.name] || 0).toFixed(1)}%)</span>${qualifiedData.guaranteedSet.has(`${group.id}|${team.name}`) ? ' ⭐' : ''}</td>
                         <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name} <span class='text-[10px] text-blue-700'>(${(qualificationSnapshot.chancesByTeam[team.name] || 0).toFixed(1)}%)</span>${qualifiedData.guaranteedSet.has(team.name) ? ' ⭐' : ''}</td>
                         <td class="px-1.5 py-2.5 text-center text-slate-600 font-medium">${team.played}</td>
                         <td class="px-1.5 py-2.5 text-center text-emerald-600 font-bold">${team.won}</td>
