@@ -2275,6 +2275,12 @@ const tournamentData = {
     ],
     "suspendedPlayers": [
       {
+        "name": "عبده جوده",
+        "team": "محمد سالم",
+        "reason": "سوء التعامل مع المنظمين وعدم اتباع التعليمات",
+        "suspendedMatch": "إيقاف المباراة القادمة"
+      },
+      {
         "name": "سعيد التوني",
         "team": "الحريفة",
         "reason": "طرد مباشر",

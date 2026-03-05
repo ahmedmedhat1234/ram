@@ -47,6 +47,193 @@ document.addEventListener('DOMContentLoaded', () => {
         return 1;
     }
 
+
+    function compareTeamsWithTiebreak(a, b, matches = []) {
+        if (b.points !== a.points) return b.points - a.points;
+
+        const headToHeadMatches = matches.filter(match => {
+            const s1 = parseInt(match.score1, 10);
+            const s2 = parseInt(match.score2, 10);
+            if (isNaN(s1) || isNaN(s2)) return false;
+            return (match.team1 === a.name && match.team2 === b.name) || (match.team1 === b.name && match.team2 === a.name);
+        });
+
+        if (headToHeadMatches.length) {
+            const hh = {
+                [a.name]: { points: 0, gd: 0, gf: 0 },
+                [b.name]: { points: 0, gd: 0, gf: 0 }
+            };
+
+            headToHeadMatches.forEach(match => {
+                const s1 = parseInt(match.score1, 10);
+                const s2 = parseInt(match.score2, 10);
+
+                hh[match.team1].gf += s1;
+                hh[match.team1].gd += (s1 - s2);
+                hh[match.team2].gf += s2;
+                hh[match.team2].gd += (s2 - s1);
+
+                if (Number.isFinite(match.team1Points) || Number.isFinite(match.team2Points)) {
+                    hh[match.team1].points += Number.isFinite(match.team1Points) ? Number(match.team1Points) : 0;
+                    hh[match.team2].points += Number.isFinite(match.team2Points) ? Number(match.team2Points) : 0;
+                } else if (s1 > s2) {
+                    hh[match.team1].points += 3;
+                } else if (s2 > s1) {
+                    hh[match.team2].points += 3;
+                } else {
+                    hh[match.team1].points += 1;
+                    hh[match.team2].points += 1;
+                }
+            });
+
+            if (hh[b.name].points !== hh[a.name].points) return hh[b.name].points - hh[a.name].points;
+            if (hh[b.name].gd !== hh[a.name].gd) return hh[b.name].gd - hh[a.name].gd;
+            if (hh[b.name].gf !== hh[a.name].gf) return hh[b.name].gf - hh[a.name].gf;
+        }
+
+        if (b.gd !== a.gd) return b.gd - a.gd;
+        if (b.gf !== a.gf) return b.gf - a.gf;
+        return a.name.localeCompare(b.name, 'ar');
+    }
+
+    function rankGroupTeams(groupId, teamRows, matches) {
+        const groupMatches = (matches || []).filter(match => Number(match.group) === Number(groupId));
+        return [...teamRows].sort((a, b) => compareTeamsWithTiebreak(a, b, groupMatches));
+    }
+
+    function getQualificationSnapshot(iterations = 4000) {
+        const groups = tournamentData.groups || [];
+        const allMatches = tournamentData.matches || [];
+        const playedMatches = allMatches.filter(match => !isNaN(parseInt(match.score1, 10)) && !isNaN(parseInt(match.score2, 10)));
+        const remainingMatches = allMatches.filter(match => isNaN(parseInt(match.score1, 10)) || isNaN(parseInt(match.score2, 10)));
+        const scenarios = remainingMatches.length ? iterations : 1;
+
+        const qualifyCount = {};
+        const teamGroup = {};
+        groups.forEach(group => (group.teams || []).forEach(team => {
+            qualifyCount[team.name] = 0;
+            teamGroup[team.name] = group.id;
+        }));
+
+        for (let i = 0; i < scenarios; i += 1) {
+            const scenarioMatches = [...playedMatches];
+            remainingMatches.forEach(match => {
+                const r = Math.random();
+                let score1 = 1;
+                let score2 = 1;
+                if (r < 1 / 3) {
+                    score1 = 1; score2 = 0;
+                } else if (r < 2 / 3) {
+                    score1 = 1; score2 = 1;
+                } else {
+                    score1 = 0; score2 = 1;
+                }
+                scenarioMatches.push({ ...match, score1, score2, team1Points: undefined, team2Points: undefined });
+            });
+
+            const groupTables = new Map();
+            groups.forEach(group => {
+                const table = new Map();
+                (group.teams || []).forEach(team => {
+                    table.set(team.name, { name: team.name, played: 0, won: 0, draw: 0, lost: 0, gf: 0, ga: 0, gd: 0, points: 0 });
+                });
+
+                scenarioMatches.forEach(match => {
+                    if (Number(match.group) !== Number(group.id)) return;
+                    const t1 = table.get(match.team1);
+                    const t2 = table.get(match.team2);
+                    if (!t1 || !t2) return;
+                    const s1 = parseInt(match.score1, 10);
+                    const s2 = parseInt(match.score2, 10);
+                    if (isNaN(s1) || isNaN(s2)) return;
+
+                    t1.played += 1; t2.played += 1;
+                    t1.gf += s1; t1.ga += s2;
+                    t2.gf += s2; t2.ga += s1;
+
+                    if (Number.isFinite(match.team1Points) || Number.isFinite(match.team2Points)) {
+                        t1.points += Number.isFinite(match.team1Points) ? Number(match.team1Points) : 0;
+                        t2.points += Number.isFinite(match.team2Points) ? Number(match.team2Points) : 0;
+                        if (s1 > s2) { t1.won += 1; t2.lost += 1; }
+                        else if (s2 > s1) { t2.won += 1; t1.lost += 1; }
+                        else { t1.draw += 1; t2.draw += 1; }
+                    } else if (s1 > s2) {
+                        t1.won += 1; t2.lost += 1; t1.points += 3;
+                    } else if (s2 > s1) {
+                        t2.won += 1; t1.lost += 1; t2.points += 3;
+                    } else {
+                        t1.draw += 1; t2.draw += 1; t1.points += 1; t2.points += 1;
+                    }
+                });
+
+                const ranked = rankGroupTeams(group.id, [...table.values()].map(team => ({ ...team, gd: team.gf - team.ga })), scenarioMatches);
+                groupTables.set(group.id, ranked);
+            });
+
+            const thirdTeams = [];
+            groupTables.forEach((ranked, groupId) => {
+                if (ranked[0]) qualifyCount[ranked[0].name] += 1;
+                if (ranked[1]) qualifyCount[ranked[1].name] += 1;
+                if (ranked[2]) thirdTeams.push({ ...ranked[2], groupId });
+            });
+
+            thirdTeams
+                .sort((a, b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    if (b.gd !== a.gd) return b.gd - a.gd;
+                    if (b.gf !== a.gf) return b.gf - a.gf;
+                    return a.name.localeCompare(b.name, 'ar');
+                })
+                .slice(0, 6)
+                .forEach(team => { qualifyCount[team.name] += 1; });
+        }
+
+        const chancesByTeam = {};
+        Object.keys(qualifyCount).forEach(team => {
+            chancesByTeam[team] = scenarios ? (qualifyCount[team] / scenarios) * 100 : 0;
+        });
+
+        let guaranteed = [];
+        if (!remainingMatches.length) {
+            const finalGroupTables = new Map();
+            const completedStandings = getComputedGroupStandings();
+            groups.forEach(group => {
+                const ranked = rankGroupTeams(
+                    group.id,
+                    completedStandings.get(group.id) || [],
+                    playedMatches
+                );
+                finalGroupTables.set(group.id, ranked);
+            });
+
+            const qualifiedNow = [];
+            const thirdTeams = [];
+            finalGroupTables.forEach((ranked, groupId) => {
+                if (ranked[0]) qualifiedNow.push({ team: ranked[0].name, groupId });
+                if (ranked[1]) qualifiedNow.push({ team: ranked[1].name, groupId });
+                if (ranked[2]) thirdTeams.push({ ...ranked[2], groupId });
+            });
+
+            thirdTeams
+                .sort((a, b) => {
+                    if (b.points !== a.points) return b.points - a.points;
+                    if (b.gd !== a.gd) return b.gd - a.gd;
+                    if (b.gf !== a.gf) return b.gf - a.gf;
+                    return a.name.localeCompare(b.name, 'ar');
+                })
+                .slice(0, 6)
+                .forEach(team => qualifiedNow.push({ team: team.name, groupId: team.groupId }));
+
+            guaranteed = qualifiedNow;
+        }
+
+        return {
+            chancesByTeam,
+            guaranteed,
+            guaranteedSet: new Set(guaranteed.map(item => `${item.groupId}|${item.team}`))
+        };
+    }
+
     function getComputedGroupStandings() {
         const standingsByGroup = new Map();
 
@@ -120,15 +307,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const result = new Map();
         standingsByGroup.forEach((teamsMap, groupId) => {
-            const rows = [...teamsMap.values()].map(team => ({
+            const rowsUnsorted = [...teamsMap.values()].map(team => ({
                 ...team,
                 gd: team.gf - team.ga
-            })).sort((a, b) => {
-                if (b.points !== a.points) return b.points - a.points;
-                if (b.gd !== a.gd) return b.gd - a.gd;
-                if (b.gf !== a.gf) return b.gf - a.gf;
-                return a.name.localeCompare(b.name, 'ar');
-            });
+            }));
+
+            const rows = rankGroupTeams(groupId, rowsUnsorted, tournamentData.matches || []);
 
             result.set(groupId, rows);
         });
@@ -624,8 +808,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGroups(filter = '') {
         contentGroups.innerHTML = '';
         const computedStandings = getComputedGroupStandings();
-        const qualifiedData = getQualifiedTeamsData();
-        const expectedData = getExpectedQualificationData();
+        const qualificationSnapshot = getQualificationSnapshot();
+        const qualifiedData = { guaranteed: qualificationSnapshot.guaranteed, guaranteedSet: qualificationSnapshot.guaranteedSet };
+        const expectedData = Object.entries(qualificationSnapshot.chancesByTeam).map(([team, chance]) => ({
+            team,
+            groupId: ((tournamentData.groups || []).find(g => (g.teams || []).some(t => t.name === team)) || {}).id || '-',
+            chance
+        })).sort((a, b) => b.chance - a.chance);
 
         const qualifiedCard = document.createElement('div');
         qualifiedCard.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col mb-4 md:col-span-2';
@@ -635,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <i class="fas fa-star text-amber-500 text-xs"></i>
             </div>
             <div class="p-4 text-xs text-slate-600 leading-6">
-                <div class="font-bold text-emerald-700 mb-2">إجمالي الفرق الصاعدة رسميًا: ${qualifiedData.guaranteed.length}</div>
+                <div class="font-bold text-emerald-700 mb-2">إجمالي الفرق الصاعدة رسميًا (بعد اكتمال كل المباريات): ${qualifiedData.guaranteed.length}</div>
                 ${qualifiedData.guaranteed.length ? qualifiedData.guaranteed.map(item => `<div>⭐ المجموعة ${item.groupId}: ${item.team}</div>`).join('') : '<div>لا يوجد فريق ضمن التأهل رسميًا حتى الآن وفق النظام الحالي (الأول والثاني + أفضل 6 ثوالث).</div>'}
             </div>
         `;
@@ -687,7 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
             teams.forEach((team, idx) => {
                 tableHTML += `
                     <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="window.openTeamModal('${team.name}')">
-                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name}${qualifiedData.guaranteedSet.has(team.name) ? ' ⭐' : ''}</td>
+                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name} <span class='text-[10px] text-blue-700'>(${(qualificationSnapshot.chancesByTeam[team.name] || 0).toFixed(1)}%)</span>${qualifiedData.guaranteedSet.has(`${group.id}|${team.name}`) ? ' ⭐' : ''}</td>
                         <td class="px-1.5 py-2.5 text-center text-slate-600 font-medium">${team.played}</td>
                         <td class="px-1.5 py-2.5 text-center text-emerald-600 font-bold">${team.won}</td>
                         <td class="px-1.5 py-2.5 text-center text-blue-600 font-bold">${team.draw}</td>
@@ -823,6 +1012,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        (tournamentData.stats?.suspendedPlayers || []).forEach(item => {
+            suspended.push({
+                name: item.name,
+                team: item.team,
+                match: item.suspendedMatch || item.reason || 'إيقاف المباراة القادمة'
+            });
+        });
+
+        const suspensionSeen = new Set();
+        const uniqueSuspended = suspended.filter(p => {
+            const key = `${p.name}|${p.team}|${p.match}`;
+            if (suspensionSeen.has(key)) return false;
+            suspensionSeen.add(key);
+            return true;
+        });
+
         const yellowRows = Object.entries(yellows).sort((a, b) => b[1] - a[1]).map(([name, count], idx) => {
             const team = Object.keys(tournamentData.teams || {}).find(t => (tournamentData.teams[t].players || []).includes(name)) || "غير معروف";
             return `
@@ -834,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        const suspendedRows = suspended.map((p, idx) => `
+        const suspendedRows = uniqueSuspended.map((p, idx) => `
             <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.openTeamModal('${p.team}')">
                 <td class="px-3 py-2.5 font-bold text-slate-800">${idx + 1}. ${p.name}</td>
                 <td class="px-3 py-2.5 text-slate-600">${p.team}</td>
@@ -867,7 +1072,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderRules() {
         contentRules.innerHTML = '';
-        (tournamentData.rules || []).forEach(rule => {
+        const rules = (tournamentData.rules && tournamentData.rules.length)
+            ? tournamentData.rules
+            : [
+                {
+                    title: 'نظام التأهل',
+                    content: 'يصعد أول وثاني كل مجموعة، بالإضافة إلى أفضل 6 فرق تحتل المركز الثالث على مستوى جميع المجموعات. وفي حالة تساوي النقاط يتم الاحتكام إلى: المواجهات المباشرة ثم فرق الأهداف ثم الأهداف المسجلة.'
+                }
+            ];
+        rules.forEach(rule => {
             const card = document.createElement('div');
             card.className = 'bg-white rounded-xl p-4 shadow-sm border border-slate-200 mb-3';
             card.innerHTML = `
