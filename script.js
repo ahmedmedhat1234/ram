@@ -102,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getQualificationSnapshot(iterations = 4000) {
-    function getQualificationSnapshot(iterations = 5000) {
         const groups = tournamentData.groups || [];
         const allMatches = tournamentData.matches || [];
         const playedMatches = allMatches.filter(match => !isNaN(parseInt(match.score1, 10)) && !isNaN(parseInt(match.score2, 10)));
@@ -110,13 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const scenarios = remainingMatches.length ? iterations : 1;
 
         const qualifyCount = {};
-        const teamGroup = {};
-        groups.forEach(group => (group.teams || []).forEach(team => {
-            qualifyCount[team.name] = 0;
         const firstCount = {};
         const secondCount = {};
         const bestThirdCount = {};
         const teamGroup = {};
+
         groups.forEach(group => (group.teams || []).forEach(team => {
             qualifyCount[team.name] = 0;
             firstCount[team.name] = 0;
@@ -132,11 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 let score1 = 1;
                 let score2 = 1;
                 if (r < 1 / 3) {
-                    score1 = 1; score2 = 0;
+                    score1 = 1;
+                    score2 = 0;
                 } else if (r < 2 / 3) {
-                    score1 = 1; score2 = 1;
+                    score1 = 1;
+                    score2 = 1;
                 } else {
-                    score1 = 0; score2 = 1;
+                    score1 = 0;
+                    score2 = 1;
                 }
                 scenarioMatches.push({ ...match, score1, score2, team1Points: undefined, team2Points: undefined });
             });
@@ -153,26 +153,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     const t1 = table.get(match.team1);
                     const t2 = table.get(match.team2);
                     if (!t1 || !t2) return;
+
                     const s1 = parseInt(match.score1, 10);
                     const s2 = parseInt(match.score2, 10);
                     if (isNaN(s1) || isNaN(s2)) return;
 
-                    t1.played += 1; t2.played += 1;
-                    t1.gf += s1; t1.ga += s2;
-                    t2.gf += s2; t2.ga += s1;
+                    t1.played += 1;
+                    t2.played += 1;
+                    t1.gf += s1;
+                    t1.ga += s2;
+                    t2.gf += s2;
+                    t2.ga += s1;
 
                     if (Number.isFinite(match.team1Points) || Number.isFinite(match.team2Points)) {
                         t1.points += Number.isFinite(match.team1Points) ? Number(match.team1Points) : 0;
                         t2.points += Number.isFinite(match.team2Points) ? Number(match.team2Points) : 0;
-                        if (s1 > s2) { t1.won += 1; t2.lost += 1; }
-                        else if (s2 > s1) { t2.won += 1; t1.lost += 1; }
-                        else { t1.draw += 1; t2.draw += 1; }
+                        if (s1 > s2) {
+                            t1.won += 1;
+                            t2.lost += 1;
+                        } else if (s2 > s1) {
+                            t2.won += 1;
+                            t1.lost += 1;
+                        } else {
+                            t1.draw += 1;
+                            t2.draw += 1;
+                        }
                     } else if (s1 > s2) {
-                        t1.won += 1; t2.lost += 1; t1.points += 3;
+                        t1.won += 1;
+                        t2.lost += 1;
+                        t1.points += 3;
                     } else if (s2 > s1) {
-                        t2.won += 1; t1.lost += 1; t2.points += 3;
+                        t2.won += 1;
+                        t1.lost += 1;
+                        t2.points += 3;
                     } else {
-                        t1.draw += 1; t2.draw += 1; t1.points += 1; t2.points += 1;
+                        t1.draw += 1;
+                        t2.draw += 1;
+                        t1.points += 1;
+                        t2.points += 1;
                     }
                 });
 
@@ -182,8 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const thirdTeams = [];
             groupTables.forEach((ranked, groupId) => {
-                if (ranked[0]) qualifyCount[ranked[0].name] += 1;
-                if (ranked[1]) qualifyCount[ranked[1].name] += 1;
                 if (ranked[0]) {
                     qualifyCount[ranked[0].name] += 1;
                     firstCount[ranked[0].name] += 1;
@@ -203,52 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return a.name.localeCompare(b.name, 'ar');
                 })
                 .slice(0, 6)
-                .forEach(team => { qualifyCount[team.name] += 1; });
-        }
-
-        const chancesByTeam = {};
-        Object.keys(qualifyCount).forEach(team => {
-            chancesByTeam[team] = scenarios ? (qualifyCount[team] / scenarios) * 100 : 0;
-        });
-
-        let guaranteed = [];
-        if (!remainingMatches.length) {
-            const finalGroupTables = new Map();
-            const completedStandings = getComputedGroupStandings();
-            groups.forEach(group => {
-                const ranked = rankGroupTeams(
-                    group.id,
-                    completedStandings.get(group.id) || [],
-                    playedMatches
-                );
-                finalGroupTables.set(group.id, ranked);
-            });
-
-            const qualifiedNow = [];
-            const thirdTeams = [];
-            finalGroupTables.forEach((ranked, groupId) => {
-                if (ranked[0]) qualifiedNow.push({ team: ranked[0].name, groupId });
-                if (ranked[1]) qualifiedNow.push({ team: ranked[1].name, groupId });
-                if (ranked[2]) thirdTeams.push({ ...ranked[2], groupId });
-            });
-
-            thirdTeams
-                .sort((a, b) => {
-                    if (b.points !== a.points) return b.points - a.points;
-                    if (b.gd !== a.gd) return b.gd - a.gd;
-                    if (b.gf !== a.gf) return b.gf - a.gf;
-                    return a.name.localeCompare(b.name, 'ar');
-                })
-                .slice(0, 6)
-                .forEach(team => qualifiedNow.push({ team: team.name, groupId: team.groupId }));
-
-            guaranteed = qualifiedNow;
-        }
-
-        return {
-            chancesByTeam,
-            guaranteed,
-            guaranteedSet: new Set(guaranteed.map(item => `${item.groupId}|${item.team}`))
                 .forEach(team => {
                     qualifyCount[team.name] += 1;
                     bestThirdCount[team.name] += 1;
@@ -276,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
             secondChanceByTeam,
             bestThirdChanceByTeam,
             guaranteed,
-            guaranteedSet: new Set(guaranteed.map(item => item.team))
+            guaranteedSet: new Set(guaranteed.map(item => `${item.groupId}|${item.team}`))
         };
     }
 
@@ -859,7 +829,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const expectedData = Object.entries(qualificationSnapshot.chancesByTeam).map(([team, chance]) => ({
             team,
             groupId: ((tournamentData.groups || []).find(g => (g.teams || []).some(t => t.name === team)) || {}).id || '-',
-            chance
             chance,
             firstChance: qualificationSnapshot.firstChanceByTeam[team] || 0,
             secondChance: qualificationSnapshot.secondChanceByTeam[team] || 0,
@@ -933,7 +902,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 tableHTML += `
                     <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="window.openTeamModal('${team.name}')">
                         <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name} <span class='text-[10px] text-blue-700'>(${(qualificationSnapshot.chancesByTeam[team.name] || 0).toFixed(1)}%)</span>${qualifiedData.guaranteedSet.has(`${group.id}|${team.name}`) ? ' ⭐' : ''}</td>
-                        <td class="px-2 py-2.5 font-bold text-slate-800">${idx + 1}. ${team.name} <span class='text-[10px] text-blue-700'>(${(qualificationSnapshot.chancesByTeam[team.name] || 0).toFixed(1)}%)</span>${qualifiedData.guaranteedSet.has(team.name) ? ' ⭐' : ''}</td>
                         <td class="px-1.5 py-2.5 text-center text-slate-600 font-medium">${team.played}</td>
                         <td class="px-1.5 py-2.5 text-center text-emerald-600 font-bold">${team.won}</td>
                         <td class="px-1.5 py-2.5 text-center text-blue-600 font-bold">${team.draw}</td>
