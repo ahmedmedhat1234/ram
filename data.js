@@ -893,8 +893,8 @@ const tournamentData = {
       "group": 3,
       "team1": "الدراويش",
       "team2": "الحريفة",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "3"
     },
     {
       "date": "الخميس 5/3",
