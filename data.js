@@ -1110,7 +1110,7 @@ const tournamentData = {
       "score2": ""
     },
     {
-      "date": "الجمعة 6/3",
+      "date": "الأربعاء 26/2",
       "time": "8:20",
       "group": 13,
       "team1": "اباظة أ",
@@ -1119,7 +1119,7 @@ const tournamentData = {
       "score2": "1"
     },
     {
-      "date": "السبت 7/3",
+      "date": "الخميس 27/2",
       "time": "8:20",
       "group": 13,
       "team1": "الدوكش",
@@ -1128,7 +1128,7 @@ const tournamentData = {
       "score2": "1"
     },
     {
-      "date": "الأحد 8/3",
+      "date": "الجمعة 28/2",
       "time": "8:20",
       "group": 13,
       "team1": "اباظة أ",
@@ -1137,7 +1137,7 @@ const tournamentData = {
       "score2": "0"
     },
     {
-      "date": "الاثنين 9/3",
+      "date": "السبت 1/3",
       "time": "8:20",
       "group": 13,
       "team1": "اسلام دياب",
@@ -1146,7 +1146,7 @@ const tournamentData = {
       "score2": "1"
     },
     {
-      "date": "الثلاثاء 10/3",
+      "date": "الأحد 2/3",
       "time": "8:20",
       "group": 13,
       "team1": "اباظة أ",
@@ -1155,7 +1155,7 @@ const tournamentData = {
       "score2": "2"
     },
     {
-      "date": "الأربعاء 11/3",
+      "date": "الاثنين 3/3",
       "time": "8:20",
       "group": 13,
       "team1": "اسلام دياب",
