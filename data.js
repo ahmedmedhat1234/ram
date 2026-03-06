@@ -902,8 +902,8 @@ const tournamentData = {
       "group": 3,
       "team1": "أصدقاء محمد صبحي",
       "team2": "محمود أشرف",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "3"
     },
     {
       "date": "الخميس 5/3",
@@ -915,8 +915,8 @@ const tournamentData = {
       "score2": "0"
     },
     {
-      "date": "الخميس 5/3",
-      "time": "11:20",
+      "date": "الجمعة 6/3",
+      "time": "8:30",
       "group": 4,
       "team1": "زيزو",
       "team2": "نمرة 2",
@@ -989,8 +989,8 @@ const tournamentData = {
       "group": 7,
       "team1": "عتمان",
       "team2": "أصدقاء فتح الله",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "3"
     },
     {
       "date": "السبت 7/3",
