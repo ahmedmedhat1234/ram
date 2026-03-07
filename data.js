@@ -548,8 +548,8 @@ const tournamentData = {
       "group": 3,
       "team1": "أصدقاء محمد صبحي",
       "team2": "الحريفة",
-      "score1": "",
-      "score2": ""
+      "score1": "2",
+      "score2": "2"
     },
     {
       "date": "الجمعة 27/2",
@@ -983,8 +983,15 @@ const tournamentData = {
       "group": 7,
       "team1": "نجوم الورقية",
       "team2": "اللؤلؤة",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "2",
+      "team1Scorers": [
+        "احمد الديب"
+      ],
+      "team2Scorers": [
+        "عمر حسام",
+        "عبودة وليد"
+      ]
     },
     {
       "date": "السبت 7/3",
@@ -1019,8 +1026,12 @@ const tournamentData = {
       "group": 8,
       "team1": "حسن الندي",
       "team2": "الاتحاد",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "3",
+      "team1Scorers": [],
+      "team2Scorers": [
+        "محمود شوقي (3 أهداف)"
+      ]
     },
     {
       "date": "الأحد 8/3",
@@ -1037,8 +1048,8 @@ const tournamentData = {
       "group": 10,
       "team1": "فخر الدين",
       "team2": "أباظة",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "0"
     },
     {
       "date": "الثلاثاء 10/3",
@@ -1082,8 +1093,14 @@ const tournamentData = {
       "group": 1,
       "team1": "نسور مصر",
       "team2": "كابيتانو",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "2",
+      "team1Scorers": [
+        "عصام شيبة"
+      ],
+      "team2Scorers": [
+        "محمد وائل (هدفان)"
+      ]
     },
     {
       "date": "الثلاثاء 10/3",
