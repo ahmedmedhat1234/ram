@@ -1001,8 +1001,8 @@ const tournamentData = {
       "group": 8,
       "team1": "الجديدة",
       "team2": "الاتحاد",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "1"
     },
     {
       "date": "الأحد 8/3",
