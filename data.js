@@ -974,8 +974,8 @@ const tournamentData = {
       "group": 6,
       "team1": "ميدو خليل",
       "team2": "نجوم أنطون يادس",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "6"
     },
     {
       "date": "السبت 7/3",
