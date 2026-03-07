@@ -548,8 +548,8 @@ const tournamentData = {
       "group": 3,
       "team1": "أصدقاء محمد صبحي",
       "team2": "الحريفة",
-      "score1": "7",
-      "score2": "3"
+      "score1": "",
+      "score2": ""
     },
     {
       "date": "الجمعة 27/2",
@@ -1001,12 +1001,8 @@ const tournamentData = {
       "group": 8,
       "team1": "الجديدة",
       "team2": "الاتحاد",
-      "score1": "1",
-      "score2": "1",
-      "team1Scorers": [],
-      "team2Scorers": [
-        "محمد مسعود"
-      ]
+      "score1": "",
+      "score2": ""
     },
     {
       "date": "الأحد 8/3",
