@@ -1126,23 +1126,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderKnockoutBracket() {
         contentKnockout.innerHTML = '';
 
-        const createMatchBox = (label) => `
-            <div class="bg-white border border-slate-200 rounded-xl p-2 text-[11px] md:text-xs font-black text-slate-500 text-center shadow-sm min-h-10 flex items-center justify-center">
-                ${label}
+        const createFixtureCard = (matchLabel) => `
+            <div class="bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-sm">
+                <div class="text-[10px] md:text-xs font-black text-slate-500 mb-2">${matchLabel}</div>
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 flex items-center text-[11px] md:text-xs font-bold text-slate-400">اسم الفريق</div>
+                        <div class="w-8 h-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-xs font-black text-slate-400">-</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 h-8 rounded-lg border border-slate-200 bg-slate-50 px-2 flex items-center text-[11px] md:text-xs font-bold text-slate-400">اسم الفريق</div>
+                        <div class="w-8 h-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-xs font-black text-slate-400">-</div>
+                    </div>
+                </div>
             </div>
         `;
 
-        const leftRound32 = Array.from({ length: 8 }, (_, i) => createMatchBox(`مباراة ${i + 1}`)).join('');
-        const rightRound32 = Array.from({ length: 8 }, (_, i) => createMatchBox(`مباراة ${i + 9}`)).join('');
+        const createRoundColumn = (title, count, startIndex, verticalGapClass = 'space-y-4') => `
+            <div class="${verticalGapClass}">
+                <div class="text-center text-[11px] md:text-xs font-black text-blue-700 bg-blue-50 border border-blue-100 rounded-xl py-2">${title}</div>
+                ${Array.from({ length: count }, (_, i) => createFixtureCard(`مباراة ${startIndex + i}`)).join('')}
+            </div>
+        `;
 
-        const leftRound16 = Array.from({ length: 4 }, (_, i) => createMatchBox(`الفائز من ${i * 2 + 1} × ${i * 2 + 2}`)).join('');
-        const rightRound16 = Array.from({ length: 4 }, (_, i) => createMatchBox(`الفائز من ${i * 2 + 9} × ${i * 2 + 10}`)).join('');
+        const leftRound16 = createRoundColumn('دور الـ16', 4, 1, 'space-y-3');
+        const leftQuarter = createRoundColumn('ربع النهائي', 2, 9, 'space-y-8');
+        const leftSemi = createRoundColumn('نصف النهائي', 1, 13, 'space-y-12');
 
-        const leftQuarter = Array.from({ length: 2 }, (_, i) => createMatchBox(`الفائز من ثمن ${i * 2 + 1} × ثمن ${i * 2 + 2}`)).join('');
-        const rightQuarter = Array.from({ length: 2 }, (_, i) => createMatchBox(`الفائز من ثمن ${i * 2 + 5} × ثمن ${i * 2 + 6}`)).join('');
+        const rightSemi = createRoundColumn('نصف النهائي', 1, 14, 'space-y-12');
+        const rightQuarter = createRoundColumn('ربع النهائي', 2, 11, 'space-y-8');
+        const rightRound16 = createRoundColumn('دور الـ16', 4, 5, 'space-y-3');
 
-        const leftSemi = createMatchBox('الفائز من ربع 1 × ربع 2');
-        const rightSemi = createMatchBox('الفائز من ربع 3 × ربع 4');
+        const finalCard = createFixtureCard('مباراة 15');
 
         const card = document.createElement('div');
         card.className = 'bg-white rounded-3xl border border-slate-200 shadow-sm p-4 md:p-6';
@@ -1157,23 +1172,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="overflow-x-auto">
                 <div class="min-w-[1180px] grid grid-cols-[1fr_1fr_1fr_auto_1fr_1fr_1fr] gap-3 items-center">
-                    <div class="space-y-2">${leftRound32}</div>
-                    <div class="space-y-4">${leftRound16}</div>
-                    <div class="space-y-8">${leftQuarter}</div>
+                    ${leftRound16}
+                    ${leftQuarter}
+                    ${leftSemi}
 
-                    <div class="flex flex-col items-center gap-2 px-2">
+                    <div class="flex flex-col items-center gap-3 px-2">
                         <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-lg flex items-center justify-center">
                             <i class="fas fa-trophy text-lg"></i>
                         </div>
                         <div class="text-[10px] md:text-xs font-black text-slate-700">النهائي</div>
-                        ${leftSemi}
-                        <div class="text-slate-400 text-[10px] font-black">VS</div>
-                        ${rightSemi}
+                        <div class="w-64">${finalCard}</div>
                     </div>
 
-                    <div class="space-y-8">${rightQuarter}</div>
-                    <div class="space-y-4">${rightRound16}</div>
-                    <div class="space-y-2">${rightRound32}</div>
+                    ${rightSemi}
+                    ${rightQuarter}
+                    ${rightRound16}
                 </div>
             </div>
         `;
