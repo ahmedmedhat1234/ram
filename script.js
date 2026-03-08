@@ -5,12 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabStats = document.getElementById('tab-stats');
     const tabDisciplinary = document.getElementById('tab-disciplinary');
     const tabRules = document.getElementById('tab-rules');
+    const tabKnockout = document.getElementById('tab-knockout');
     
     const contentDaily = document.getElementById('content-daily');
     const contentGroups = document.getElementById('content-groups');
     const contentStats = document.getElementById('content-stats');
     const contentDisciplinary = document.getElementById('content-disciplinary');
     const contentRules = document.getElementById('content-rules');
+    const contentKnockout = document.getElementById('content-knockout');
 
     const teamModal = document.getElementById('team-modal');
     const closeModal = document.getElementById('close-modal');
@@ -551,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper to switch tabs
     function switchTab(activeTab, activeContent) {
-        [tabDaily, tabGroups, tabStats, tabDisciplinary, tabRules].forEach(tab => {
+        [tabDaily, tabGroups, tabStats, tabDisciplinary, tabRules, tabKnockout].forEach(tab => {
             if (tab) {
                 tab.classList.remove('tab-active');
                 tab.classList.add('text-slate-500');
@@ -559,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tab.classList.add('text-[10px]', 'md:text-sm');
             }
         });
-        [contentDaily, contentGroups, contentStats, contentDisciplinary, contentRules].forEach(content => {
+        [contentDaily, contentGroups, contentStats, contentDisciplinary, contentRules, contentKnockout].forEach(content => {
             if (content) content.classList.add('hidden');
         });
 
@@ -1121,12 +1123,71 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderKnockoutBracket() {
+        contentKnockout.innerHTML = '';
+
+        const createMatchBox = (label) => `
+            <div class="bg-white border border-slate-200 rounded-xl p-2 text-[11px] md:text-xs font-black text-slate-500 text-center shadow-sm min-h-10 flex items-center justify-center">
+                ${label}
+            </div>
+        `;
+
+        const leftRound32 = Array.from({ length: 8 }, (_, i) => createMatchBox(`مباراة ${i + 1}`)).join('');
+        const rightRound32 = Array.from({ length: 8 }, (_, i) => createMatchBox(`مباراة ${i + 9}`)).join('');
+
+        const leftRound16 = Array.from({ length: 4 }, (_, i) => createMatchBox(`الفائز من ${i * 2 + 1} × ${i * 2 + 2}`)).join('');
+        const rightRound16 = Array.from({ length: 4 }, (_, i) => createMatchBox(`الفائز من ${i * 2 + 9} × ${i * 2 + 10}`)).join('');
+
+        const leftQuarter = Array.from({ length: 2 }, (_, i) => createMatchBox(`الفائز من ثمن ${i * 2 + 1} × ثمن ${i * 2 + 2}`)).join('');
+        const rightQuarter = Array.from({ length: 2 }, (_, i) => createMatchBox(`الفائز من ثمن ${i * 2 + 5} × ثمن ${i * 2 + 6}`)).join('');
+
+        const leftSemi = createMatchBox('الفائز من ربع 1 × ربع 2');
+        const rightSemi = createMatchBox('الفائز من ربع 3 × ربع 4');
+
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-3xl border border-slate-200 shadow-sm p-4 md:p-6';
+        card.innerHTML = `
+            <div class="flex items-center justify-between flex-wrap gap-3 mb-5">
+                <h3 class="text-lg md:text-xl font-black text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-trophy text-amber-500"></i>
+                    شجرة خروج المغلوب
+                </h3>
+                <span class="text-[11px] md:text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-black">تصاعد تلقائي: الفائز يتأهل للدور التالي</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <div class="min-w-[1180px] grid grid-cols-[1fr_1fr_1fr_auto_1fr_1fr_1fr] gap-3 items-center">
+                    <div class="space-y-2">${leftRound32}</div>
+                    <div class="space-y-4">${leftRound16}</div>
+                    <div class="space-y-8">${leftQuarter}</div>
+
+                    <div class="flex flex-col items-center gap-2 px-2">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-lg flex items-center justify-center">
+                            <i class="fas fa-trophy text-lg"></i>
+                        </div>
+                        <div class="text-[10px] md:text-xs font-black text-slate-700">النهائي</div>
+                        ${leftSemi}
+                        <div class="text-slate-400 text-[10px] font-black">VS</div>
+                        ${rightSemi}
+                    </div>
+
+                    <div class="space-y-8">${rightQuarter}</div>
+                    <div class="space-y-4">${rightRound16}</div>
+                    <div class="space-y-2">${rightRound32}</div>
+                </div>
+            </div>
+        `;
+
+        contentKnockout.appendChild(card);
+    }
+
     // Tab Switching Events
     tabDaily.addEventListener('click', () => { switchTab(tabDaily, contentDaily); renderDaily(searchInput.value); });
     tabGroups.addEventListener('click', () => { switchTab(tabGroups, contentGroups); renderGroups(searchInput.value); });
     tabStats.addEventListener('click', () => { switchTab(tabStats, contentStats); renderStats(searchInput.value); });
     tabDisciplinary.addEventListener('click', () => { switchTab(tabDisciplinary, contentDisciplinary); renderDisciplinary(searchInput.value); });
     tabRules.addEventListener('click', () => { switchTab(tabRules, contentRules); renderRules(); });
+    tabKnockout.addEventListener('click', () => { switchTab(tabKnockout, contentKnockout); renderKnockoutBracket(); });
 
     // Search
     searchInput.addEventListener('input', (e) => {
@@ -1145,4 +1206,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStats();
     renderDisciplinary();
     renderRules();
+    renderKnockoutBracket();
 });
