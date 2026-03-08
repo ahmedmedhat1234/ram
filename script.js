@@ -1126,8 +1126,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderKnockoutBracket() {
         contentKnockout.innerHTML = '';
 
-        const createFixtureCard = (matchLabel) => `
-            <div class="bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-sm">
+        const createFixtureCard = (matchLabel, side, round, index) => `
+            <div class="match-node bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-sm" data-side="${side}" data-round="${round}" data-index="${index}">
                 <div class="text-[10px] md:text-xs font-black text-slate-500 mb-2">${matchLabel}</div>
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
@@ -1142,22 +1142,107 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        const createRoundColumn = (title, count, startIndex, verticalGapClass = 'space-y-4') => `
-            <div class="${verticalGapClass}">
+        const createRoundColumn = (title, count, startIndex, side, round, verticalGapClass = 'space-y-4') => `
+            <div class="${verticalGapClass} relative z-10">
                 <div class="text-center text-[11px] md:text-xs font-black text-blue-700 bg-blue-50 border border-blue-100 rounded-xl py-2">${title}</div>
-                ${Array.from({ length: count }, (_, i) => createFixtureCard(`مباراة ${startIndex + i}`)).join('')}
+                ${Array.from({ length: count }, (_, i) => createFixtureCard(`مباراة ${startIndex + i}`, side, round, i)).join('')}
             </div>
         `;
 
-        const leftRound16 = createRoundColumn('دور الـ16', 4, 1, 'space-y-3');
-        const leftQuarter = createRoundColumn('ربع النهائي', 2, 9, 'space-y-8');
-        const leftSemi = createRoundColumn('نصف النهائي', 1, 13, 'space-y-12');
+        const leftRound32 = createRoundColumn('دور الـ32', 8, 1, 'left', 32, 'space-y-3');
+        const leftRound16 = createRoundColumn('دور الـ16', 4, 9, 'left', 16, 'space-y-10');
+        const leftQuarter = createRoundColumn('ربع النهائي', 2, 13, 'left', 8, 'space-y-28');
+        const leftSemi = createRoundColumn('نصف النهائي', 1, 15, 'left', 4, 'space-y-[27rem]');
 
-        const rightSemi = createRoundColumn('نصف النهائي', 1, 14, 'space-y-12');
-        const rightQuarter = createRoundColumn('ربع النهائي', 2, 11, 'space-y-8');
-        const rightRound16 = createRoundColumn('دور الـ16', 4, 5, 'space-y-3');
+        const rightSemi = createRoundColumn('نصف النهائي', 1, 16, 'right', 4, 'space-y-[27rem]');
+        const rightQuarter = createRoundColumn('ربع النهائي', 2, 17, 'right', 8, 'space-y-28');
+        const rightRound16 = createRoundColumn('دور الـ16', 4, 19, 'right', 16, 'space-y-10');
+        const rightRound32 = createRoundColumn('دور الـ32', 8, 23, 'right', 32, 'space-y-3');
 
-        const finalCard = createFixtureCard('مباراة 15');
+        const finalCard = createFixtureCard('مباراة 31', 'center', 'final', 0);
+
+        const drawBracketConnections = (board) => {
+            const oldSvg = board.querySelector('svg[data-bracket-lines]');
+            if (oldSvg) oldSvg.remove();
+
+            const boardRect = board.getBoundingClientRect();
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('data-bracket-lines', 'true');
+            svg.setAttribute('class', 'absolute inset-0 z-0 pointer-events-none');
+            svg.setAttribute('width', `${board.clientWidth}`);
+            svg.setAttribute('height', `${board.clientHeight}`);
+
+            const rounds = [32, 16, 8, 4];
+            const stroke = '#94a3b8';
+            const connectorOffset = 24;
+
+            const getNode = (side, round, index) => board.querySelector(`.match-node[data-side="${side}"][data-round="${round}"][data-index="${index}"]`);
+            const getCenterPoint = (node, side) => {
+                const rect = node.getBoundingClientRect();
+                return {
+                    x: side === 'right' ? rect.left - boardRect.left : rect.right - boardRect.left,
+                    y: rect.top - boardRect.top + (rect.height / 2)
+                };
+            };
+            const getTargetPoint = (node, side) => {
+                const rect = node.getBoundingClientRect();
+                return {
+                    x: side === 'right' ? rect.right - boardRect.left : rect.left - boardRect.left,
+                    y: rect.top - boardRect.top + (rect.height / 2)
+                };
+            };
+            const getElbowX = (sourceX, targetX, side) => (side === 'left'
+                ? Math.min(sourceX, targetX) + connectorOffset
+                : Math.max(sourceX, targetX) - connectorOffset);
+            const drawLine = (x1, y1, x2, y2) => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', `${x1}`);
+                line.setAttribute('y1', `${y1}`);
+                line.setAttribute('x2', `${x2}`);
+                line.setAttribute('y2', `${y2}`);
+                line.setAttribute('stroke', stroke);
+                line.setAttribute('stroke-width', '2');
+                line.setAttribute('stroke-linecap', 'round');
+                svg.appendChild(line);
+            };
+
+            ['left', 'right'].forEach(side => {
+                rounds.forEach((round, roundIdx) => {
+                    if (roundIdx >= rounds.length - 1) return;
+                    const nextRound = rounds[roundIdx + 1];
+                    const nextCount = 8 / (2 ** (roundIdx + 1));
+                    for (let i = 0; i < nextCount; i += 1) {
+                        const topNode = getNode(side, round, i * 2);
+                        const bottomNode = getNode(side, round, i * 2 + 1);
+                        const targetNode = getNode(side, nextRound, i);
+                        if (!topNode || !bottomNode || !targetNode) continue;
+
+                        const p1 = getCenterPoint(topNode, side);
+                        const p2 = getCenterPoint(bottomNode, side);
+                        const target = getTargetPoint(targetNode, side);
+                        const elbowX = getElbowX(Math.min(p1.x, p2.x), target.x, side);
+
+                        drawLine(p1.x, p1.y, elbowX, p1.y);
+                        drawLine(p2.x, p2.y, elbowX, p2.y);
+                        drawLine(elbowX, p1.y, elbowX, p2.y);
+                        drawLine(elbowX, target.y, target.x, target.y);
+                    }
+                });
+
+                const semiNode = getNode(side, 4, 0);
+                const finalNode = board.querySelector('.match-node[data-side="center"][data-round="final"]');
+                if (semiNode && finalNode) {
+                    const source = getCenterPoint(semiNode, side);
+                    const target = getTargetPoint(finalNode, side === 'left' ? 'left' : 'right');
+                    const elbowX = getElbowX(source.x, target.x, side);
+                    drawLine(source.x, source.y, elbowX, source.y);
+                    drawLine(elbowX, source.y, elbowX, target.y);
+                    drawLine(elbowX, target.y, target.x, target.y);
+                }
+            });
+
+            board.appendChild(svg);
+        };
 
         const card = document.createElement('div');
         card.className = 'bg-white rounded-3xl border border-slate-200 shadow-sm p-4 md:p-6';
@@ -1171,12 +1256,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
 
             <div class="overflow-x-auto">
-                <div class="min-w-[1180px] grid grid-cols-[1fr_1fr_1fr_auto_1fr_1fr_1fr] gap-3 items-center">
+                <div id="knockout-board" class="relative min-w-[1800px] grid grid-cols-[1fr_1fr_1fr_1fr_auto_1fr_1fr_1fr_1fr] gap-4 items-start min-h-[1650px] py-4">
+                    ${leftRound32}
                     ${leftRound16}
                     ${leftQuarter}
                     ${leftSemi}
 
-                    <div class="flex flex-col items-center gap-3 px-2">
+                    <div class="flex flex-col items-center gap-3 px-2 relative z-10">
                         <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-lg flex items-center justify-center">
                             <i class="fas fa-trophy text-lg"></i>
                         </div>
@@ -1187,11 +1273,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${rightSemi}
                     ${rightQuarter}
                     ${rightRound16}
+                    ${rightRound32}
                 </div>
             </div>
         `;
 
         contentKnockout.appendChild(card);
+
+        const bracketBoard = card.querySelector('#knockout-board');
+        if (bracketBoard) {
+            drawBracketConnections(bracketBoard);
+            requestAnimationFrame(() => drawBracketConnections(bracketBoard));
+        }
     }
 
     // Tab Switching Events
