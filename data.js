@@ -1017,8 +1017,16 @@ const tournamentData = {
       "group": 9,
       "team1": "العمدوية",
       "team2": "نجوم الحمراء",
-      "score1": "",
-      "score2": ""
+      "score1": "4",
+      "score2": "3",
+      "team1Scorers": [
+        "اسلام (هدفان)",
+        "عمر ممدوح (هدفان)"
+      ],
+      "team2Scorers": [
+        "يحيى",
+        "حازم (هدفان)"
+      ]
     },
     {
       "date": "الأحد 8/3",
@@ -1039,8 +1047,30 @@ const tournamentData = {
       "group": 9,
       "team1": "عمر جمال",
       "team2": "شباب أنطون يادس",
-      "score1": "",
-      "score2": ""
+      "score1": "1",
+      "score2": "7",
+      "team1Scorers": [
+        "محمد رجب"
+      ],
+      "team2Scorers": [
+        "اسلام صقر (هدفان)",
+        "نجراشي (هدفان)",
+        "شعبان (هدفان)",
+        "زياد ايمن"
+      ]
+    },
+    {
+      "date": "الأحد 8/3",
+      "time": "11:20",
+      "group": 2,
+      "team1": "المغلاني",
+      "team2": "الجزيرة",
+      "score1": "2",
+      "score2": "1",
+      "team1Scorers": [
+        "محمد ابو زهرة (هدفان)"
+      ],
+      "team2Scorers": []
     },
     {
       "date": "الأحد 8/3",
@@ -1084,8 +1114,15 @@ const tournamentData = {
       "group": 12,
       "team1": "النصر",
       "team2": "أنطونيادس",
-      "score1": "",
-      "score2": ""
+      "score1": "2",
+      "score2": "2",
+      "team1Scorers": [
+        "اسلام",
+        "منعم"
+      ],
+      "team2Scorers": [
+        "عبد الجواد (هدفان)"
+      ]
     },
     {
       "date": "الثلاثاء 10/3",
