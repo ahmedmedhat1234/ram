@@ -505,9 +505,8 @@ const tournamentData = {
       "group": 11,
       "team1": "فوزي غانم منشأة بسيون",
       "team2": "دبورة",
-      "score1": "",
-      "score2": "",
-      "status": "مؤجلة"
+      "score1": "0",
+      "score2": "3"
     },
     {
       "date": "الأربعاء 25/2",
@@ -823,8 +822,12 @@ const tournamentData = {
       "group": 11,
       "team1": "نجوم دفشو",
       "team2": "الديسياوي",
-      "score1": "",
-      "score2": ""
+      "score1": "3",
+      "score2": "0",
+      "team1Scorers": [
+        "حسن ويكا (3 أهداف)"
+      ],
+      "team2Scorers": []
     },
     {
       "date": "الأربعاء 4/3",
@@ -1105,8 +1108,8 @@ const tournamentData = {
       "group": 12,
       "team1": "PH",
       "team2": "حميصة",
-      "score1": "",
-      "score2": ""
+      "score1": "12",
+      "score2": "2"
     },
     {
       "date": "الاثنين 9/3",
@@ -1154,8 +1157,8 @@ const tournamentData = {
       "group": 4,
       "team1": "نجوم كفر الدوار",
       "team2": "نمرة 2",
-      "score1": "",
-      "score2": ""
+      "score1": "2",
+      "score2": "1"
     },
     {
       "date": "الثلاثاء 10/3",
@@ -1163,8 +1166,8 @@ const tournamentData = {
       "group": 12,
       "team1": "PH",
       "team2": "أنطونيادس",
-      "score1": "",
-      "score2": ""
+      "score1": "0",
+      "score2": "0"
     },
     {
       "date": "الأربعاء 26/2",
