@@ -18,8 +18,8 @@ const tournamentData = {
       ],
       "team2Scorers": [],
       "team1YellowCards": [
-        "محمود عبده",
-        "العربي"
+        " محمود عبده العربي",
+        "."
       ],
       "team2YellowCards": [],
       "scorers": [
